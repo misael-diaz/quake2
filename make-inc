@@ -1,0 +1,27 @@
+#
+# Quake-II					December 05, 2023
+#
+# source: make-inc
+# author: @misael-diaz
+#
+# Synopsis:
+# Defines the include file for building the program with GNU make.
+#
+# Copyright (c) 2023 Misael Diaz-Maldonado
+# This file is released under the GNU General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+
+# Linux LLVM C Compiler (clang)
+CC = clang-12
+# GNU C Compiler
+CC = gcc-11
+CC = gcc-10
+CC = gcc-9
+CC = gcc
+
+# Linux LLVM C Compiler (clang) Options
+CCOPT = -std=gnu17 -g -Wall -O0
+# Linux GNU C Compiler Options
+CCOPT = -std=gnu2x -g -Wall -Wextra -O0
