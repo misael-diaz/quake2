@@ -1,8 +1,8 @@
 #!/usr/bin/make
 #
-# Quake-II					December 05, 2023
+# Quake-II						December 05, 2023
 #
-# source: test/Makefile
+# source: test/src/util/Makefile
 # author: @misael-diaz
 #
 # Synopsis:
@@ -14,10 +14,12 @@
 # (at your option) any later version.
 #
 
-all: source
+include make-inc
 
-source:
-	@$(MAKE) -C src
+all: $(UTIL_O)
+
+$(UTIL_O): $(HEADERS) $(UTIL_C)
+	$(CC) $(INC) $(CCOPT) -c $(UTIL_C) -o $(UTIL_O)
 
 clean:
-	@$(MAKE) -C src clean
+	/bin/rm -f *.o

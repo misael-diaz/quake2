@@ -2,7 +2,7 @@
 #
 # Quake-II					December 05, 2023
 #
-# source: test/Makefile
+# source: test/src/Makefile
 # author: @misael-diaz
 #
 # Synopsis:
@@ -14,10 +14,26 @@
 # (at your option) any later version.
 #
 
-all: source
+all: Quake
 
-source:
-	@$(MAKE) -C src
+coms:
+	@$(MAKE) -C com
+
+utils: coms
+	@$(MAKE) -C util
+
+cmds: coms utils
+	@$(MAKE) -C cmd
+
+cbufs: coms cmds
+	@$(MAKE) -C cbuf
+
+Quake: coms utils cmds cbufs
+	@$(MAKE) -C quake
 
 clean:
-	@$(MAKE) -C src clean
+	@$(MAKE) -C util clean
+	@$(MAKE) -C com clean
+	@$(MAKE) -C cmd clean
+	@$(MAKE) -C cbuf clean
+	@$(MAKE) -C quake clean
