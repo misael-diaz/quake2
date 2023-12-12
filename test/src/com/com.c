@@ -73,6 +73,9 @@ int Com_InitArgv (int const argc, const char **argv)
 
 	for (int i = 0; i != argc; ++i) {
 		if (!argv[i] || (strlen(argv[i])) >= MAX_TOKEN_CHARS) {
+			char msg[] = "Com_InitArgv: ignoring the argument number %d "
+				     "because it exceeds the MAX_TOKEN_CHARS %d\n";
+			Com_Printf(msg, i, MAX_TOKEN_CHARS);
 			com_argv[i] = "";
 		} else {
 			com_argv[i] = argv[i];
