@@ -33,5 +33,6 @@ int  Com_AddParam(const char *parm);
 int  Com_Argc(void);
 void Com_ClearArgv(int const i);
 const char *Com_Argv(int const i);
+int  Com_ServerState(void);
 
 #endif

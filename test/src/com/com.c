@@ -9,6 +9,7 @@
 
 #define MAX_NUM_ARGVS 40
 
+static int server_state = 0;
 static int com_argc = 0;
 static const char *com_argv[MAX_NUM_ARGVS];
 
@@ -122,4 +123,9 @@ void Com_ClearArgv (int const i)
 	}
 
 	com_argv[i] = "";
+}
+
+int Com_ServerState (void)
+{
+	return server_state;
 }

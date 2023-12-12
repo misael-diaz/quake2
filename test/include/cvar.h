@@ -1,5 +1,5 @@
-#ifndef GUARD_QUAKE_TYPE_XCOMMAND_H
-#define GUARD_QUAKE_TYPE_XCOMMAND_H
+#ifndef GUARD_QUAKE_CVAR_H
+#define GUARD_QUAKE_CVAR_H
 
 /*
 
@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -24,8 +24,22 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// source: xcommand_t.h - defines the command function type
+// source: cvar.h -- dynamic command
 
-typedef int (*xcommand_t) (void);
+int Cvar_Get(cvar_t *var,
+	     const char *var_name,
+	     const char *var_value,
+	     int const flags);
+
+int Cvar_FullSet(cvar_t *var,
+		 const char *var_name,
+		 const char *var_value,
+		 int const flags);
+
+int Cvar_Set(cvar_t *var,
+	     const char *var_name,
+	     const char *var_value);
+
+int Cvar_Init(void);
 
 #endif

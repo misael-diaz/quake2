@@ -30,5 +30,6 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include "quake/type/qboolean.h"
 #include "quake/type/sizebuf_t.h"
 #include "quake/type/xcommand_t.h"
+#include "quake/type/cvar_t.h"
 
 #endif

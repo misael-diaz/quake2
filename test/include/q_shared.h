@@ -31,5 +31,11 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #define ERR_FATAL 0xffffffff
 
 #define MAX_TOKEN_CHARS 128
+#define MAX_STRING_TOKENS 80
+
+#define CVAR_USERINFO 2
+#define CVAR_SERVERINFO 4
+#define CVAR_NOSET 8
+#define CVAR_LATCH 16
 
 #endif

@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "util.h"
 #include "cmd.h"
 #include "cbuf.h"
+#include "cvar.h"
 
 int Quake_Free (void)
 {
@@ -60,6 +61,12 @@ int Quake_Init (int const argc, const char **argv)
 	}
 
 	rc = Cmd_Init();
+	if (rc != ERR_ENONE) {
+		Quake_Free();
+		return rc;
+	}
+
+	rc = Cvar_Init();
 	if (rc != ERR_ENONE) {
 		Quake_Free();
 		return rc;

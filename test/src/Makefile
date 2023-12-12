@@ -28,7 +28,10 @@ cmds: coms utils
 cbufs: coms cmds
 	@$(MAKE) -C cbuf
 
-Quake: coms utils cmds cbufs
+cvars: coms utils cmds
+	@$(MAKE) -C cvar
+
+Quake: coms utils cmds cbufs cvars
 	@$(MAKE) -C quake
 
 clean:
