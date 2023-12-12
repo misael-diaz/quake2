@@ -12,7 +12,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -38,6 +38,8 @@ typedef struct cmd_function_s {
 } cmd_function_t;
 
 static cmd_function_t *cmd_functions = NULL;
+static int cmd_argc = 0;
+static char *cmd_argv[MAX_STRING_TOKENS];
 qboolean cmd_wait = False;
 
 #if defined(__GCC__)
@@ -48,7 +50,7 @@ void Cmd_ExecuteString (const char *line)
 	Com_Printf("%s\n", line);
 }
 
-void Cmd_List_f (void)
+static int Cmd_List_f (void)
 {
 	int count = 0;
 	cmd_function_t *cmd = NULL;
@@ -57,11 +59,13 @@ void Cmd_List_f (void)
 	}
 
 	Com_Printf("%d commands\n", count);
+	return ERR_ENONE;
 }
 
-void Cmd_Wait_f (void)
+static int Cmd_Wait_f (void)
 {
 	cmd_wait = True;
+	return ERR_ENONE;
 }
 
 #if defined(__GCC__)
@@ -105,4 +109,19 @@ int Cmd_Init (void)
 	}
 
 	return rc;
+}
+
+int Cmd_Argc (void)
+{
+	return cmd_argc;
+}
+
+char *Cmd_Argv (int const args)
+{
+	int const argc = (args < 0)? -args : args;
+	if (argc >= cmd_argc) {
+		return NULL;
+	} else {
+		return cmd_argv[argc];
+	}
 }

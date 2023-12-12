@@ -1,5 +1,5 @@
-#ifndef GUARD_QUAKE_H
-#define GUARD_QUAKE_H
+#ifndef GUARD_QUAKE_TYPE_CVAR_H
+#define GUARD_QUAKE_TYPE_CVAR_H
 
 /*
 
@@ -24,12 +24,16 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// source: quake.h
+// source: cvar_t.h -- dynamic command variable type
 
-#include "quake/type/byte.h"
-#include "quake/type/qboolean.h"
-#include "quake/type/sizebuf_t.h"
-#include "quake/type/xcommand_t.h"
-#include "quake/type/cvar_t.h"
+typedef struct cvar_s {
+	struct cvar_s *next;
+	char *name;
+	char *string;
+	char *latched_string;
+	qboolean modified;
+	float value;
+	int flags;
+} cvar_t;
 
 #endif

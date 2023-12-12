@@ -1,3 +1,26 @@
+/*
+
+Derived from Quake-II
+
+Copyright (C) 1997-2001 Id Software, Inc.
+Copyright (C) 2023 Misael Díaz-Maldonado
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,6 +32,7 @@
 
 #define MAX_NUM_ARGVS 40
 
+static int server_state = 0;
 static int com_argc = 0;
 static const char *com_argv[MAX_NUM_ARGVS];
 
@@ -73,6 +97,9 @@ int Com_InitArgv (int const argc, const char **argv)
 
 	for (int i = 0; i != argc; ++i) {
 		if (!argv[i] || (strlen(argv[i])) >= MAX_TOKEN_CHARS) {
+			char msg[] = "Com_InitArgv: ignoring the argument number %d "
+				     "because it exceeds the MAX_TOKEN_CHARS %d\n";
+			Com_Printf(msg, i, MAX_TOKEN_CHARS);
 			com_argv[i] = "";
 		} else {
 			com_argv[i] = argv[i];
@@ -119,4 +146,9 @@ void Com_ClearArgv (int const i)
 	}
 
 	com_argv[i] = "";
+}
+
+int Com_ServerState (void)
+{
+	return server_state;
 }

@@ -15,7 +15,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -31,5 +31,11 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #define ERR_FATAL 0xffffffff
 
 #define MAX_TOKEN_CHARS 128
+#define MAX_STRING_TOKENS 80
+
+#define CVAR_USERINFO 2
+#define CVAR_SERVERINFO 4
+#define CVAR_NOSET 8
+#define CVAR_LATCH 16
 
 #endif

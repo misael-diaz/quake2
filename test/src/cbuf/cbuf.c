@@ -12,7 +12,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -97,6 +97,7 @@ int SZ_Write (sizebuf_t *buf, const void *src, int length)
 {
 	void *dst = SZ_GetSpace(buf, length);
 	if (!dst) {
+		Com_Error(ERR_FATAL, "SZ_Write: overflow error\n");
 		return ERR_FATAL;
 	}
 
@@ -150,7 +151,13 @@ int Cbuf_AddEarlyCommands (qboolean clear)
 			return ERR_FATAL;
 		}
 
-		rc = Cbuf_AddText(va(cmd, fmt, Com_Argv(i + 1), Com_Argv(i + 2)));
+		rc = va(cmd, sizeof(cmd), fmt, Com_Argv(i + 1), Com_Argv(i + 2));
+		if (rc != ERR_ENONE) {
+			Com_Error(ERR_FATAL, "Cbuf_AddEarlyCommands: truncated cmd\n");
+			return rc;
+		}
+
+		rc = Cbuf_AddText(cmd);
 		if (rc != ERR_ENONE) {
 			return rc;
 		}

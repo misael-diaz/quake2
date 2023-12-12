@@ -12,7 +12,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -48,23 +48,27 @@ static int z_count = 0;
 static int z_bytes = 0;
 
 #if (__GCC__ > 12) && (__STDC_VERSION__ > STDC17)
-__attribute__ ((access (write_only, 1), access (read_only, 2)))
-char *va (char *dst, const char *fmt, ...)
+__attribute__ ((access (write_only, 1),
+		access (read_only, 3)),
+		nonnull (1, 3))
+int va (char *dst, int const size, const char *fmt, ...)
 {
 	va_list args;
 	va_start(args);
-	vsprintf(dst, fmt, args);
+	int sz = vsnprintf(dst, size, fmt, args);
 	va_end(args);
-	return dst;
+	int const rc = (sz >= size)? ERR_FATAL : ERR_ENONE;
+	return rc;
 }
 #else
-char *va (char *dst, const char *fmt, ...)
+int va (char *dst, int const size, const char *fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
-	vsprintf(dst, fmt, args);
+	int sz = vsnprintf(dst, size, fmt, args);
 	va_end(args);
-	return dst;
+	int const rc = (sz >= size)? ERR_FATAL : ERR_ENONE;
+	return rc;
 }
 #endif
 
@@ -164,17 +168,25 @@ void *Z_Malloc (int size)
 }
 
 #if defined(__GCC__)
-__attribute__ ((access (read_only, 1)))
+__attribute__ ((access (write_only, 1),
+		access (read_only, 2)),
+		nonull (2))
 #endif
-char *CopyString (const char *src)
+int CopyString (char *dst, const char *src)
 {
+	if (dst) {
+		Com_Error(ERR_FATAL, "CopyString: placeholder must be NULL\n");
+		return ERR_FATAL;
+	}
+
 	int const sz = strlen(src) + 1;
 	void *ptr = Z_Malloc(sz);
 	if (!ptr) {
-		return NULL;
+		Com_Error(ERR_FATAL, "CopyString: memory allocation error\n");
+		return ERR_FATAL;
 	}
 
-	char *dst = ptr;
+	dst = (char *) ptr;
 	strcpy(dst, src);
-	return dst;
+	return ERR_ENONE;
 }

@@ -1,7 +1,7 @@
 #
 # Quake-II						December 05, 2023
 #
-# source: test/src/quake/make-inc
+# source: test/src/cvar/make-inc
 # author: @misael-diaz
 #
 # Synopsis:
@@ -21,32 +21,14 @@ QUAKE_H    = ../../include/quake.h
 COM_H      = ../../include/com.h
 UTIL_H     = ../../include/util.h
 CMD_H      = ../../include/cmd.h
-CBUF_H     = ../../include/cbuf.h
-CVAR_H     = ../../include/cvar.h
 HEADERS = $(Q_SHARED_H)\
 	  $(QUAKE_H)\
 	  $(COM_H)\
 	  $(UTIL_H)\
-	  $(CMD_H)\
-	  $(CBUF_H)\
-	  $(CVAR_H)
+	  $(CMD_H)
 
 # sources
-QUAKE_C = quake.c
+CVAR_C = cvar.c
 
 # objects
-COM_O   = ../../src/com/com.o 
-UTIL_O  = ../../src/util/util.o 
-CMD_O   = ../../src/cmd/cmd.o 
-CBUF_O  = ../../src/cbuf/cbuf.o 
-CVAR_O  = ../../src/cvar/cvar.o
-QUAKE_O = ../../src/quake/quake.o
-OBJS = $(COM_O)\
-       $(UTIL_O)\
-       $(CMD_O)\
-       $(CBUF_O)\
-       $(CVAR_O)\
-       $(QUAKE_O)
-
-# binaries
-QUAKE = quake.bin
+CVAR_O = cvar.o

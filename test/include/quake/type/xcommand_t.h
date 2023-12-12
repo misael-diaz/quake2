@@ -26,6 +26,6 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 // source: xcommand_t.h - defines the command function type
 
-typedef void (*xcommand_t) (void);
+typedef int (*xcommand_t) (void);
 
 #endif
