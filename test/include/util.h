@@ -26,7 +26,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 // source: util.h
 
-char *va(char *dst, const char *fmt, ...);
+int va(char *dst, int const size, const char *fmt, ...);
 
 int   Z_Init(void);
 void *Z_Free(void *ptr);
@@ -34,6 +34,6 @@ int   Z_TagFree(short const tag);
 void *Z_TagMalloc(int const sizeObj, short const tag);
 void *Z_Malloc(int size);
 
-char *CopyString(const char *src);
+int CopyString(char *dst, const char *src);
 
 #endif
