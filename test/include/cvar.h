@@ -26,6 +26,8 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 // source: cvar.h -- dynamic command
 
+char *Cvar_VariableString(const char *var_name);
+
 int Cvar_Get(cvar_t *var,
 	     const char *var_name,
 	     const char *var_value,

@@ -30,6 +30,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include "quake.h"
 #include "util.h"
 #include "com.h"
+#include "cvar.h"
 
 typedef struct cmd_function_s {
 	struct cmd_function_s *next;
@@ -85,7 +86,22 @@ match_t Cmd_SkipWhitespace (const char **string_p)
 	return rc;
 }
 
-void Cmd_CopyTokenString (const char *text)
+#if defined(DEBUG) && DEBUG
+void Cmd_CopyCMDArgs (const char *text)
+{
+	cmd_args[0] = '\0';
+	strcpy(cmd_args, text);
+	for (int i = (strlen(cmd_args) - 1); i >= 0; --i) {
+		if (cmd_args[i] <= ' ') {
+			cmd_args[i] = '\0';
+		} else {
+			break;
+		}
+	}
+	Com_Printf("Cmd_CopyCMDArgs: %s\n", cmd_args);
+}
+#else
+void Cmd_CopyCMDArgs (const char *text)
 {
 	cmd_args[0] = '\0';
 	strcpy(cmd_args, text);
@@ -97,6 +113,7 @@ void Cmd_CopyTokenString (const char *text)
 		}
 	}
 }
+#endif
 
 char *Cmd_Parse (const char **string_p)
 {
@@ -193,8 +210,8 @@ void Cmd_TokenizeString (const char **string_p)
 			break;
 		}
 
-		if (!num_tokens) {
-			Cmd_CopyTokenString(text);
+		if (num_tokens == 1) {
+			Cmd_CopyCMDArgs(text);
 		}
 
 		*string_p = text;
@@ -266,11 +283,40 @@ static int Cmd_Wait_f (void)
 	return ERR_ENONE;
 }
 
+#if defined(DEBUG) && DEBUG
+static int Cmd_Echo_f (void)
+{
+	if (Cmd_Argc()) {
+		Com_Printf("Cmd_Echo_f: %s ", Cmd_Argv(0));
+	}
+
+	for (int i = 1; i != Cmd_Argc(); ++i) {
+		Com_Printf("%s ", Cmd_Argv(i));
+	}
+
+	return ERR_ENONE;
+}
+#else
+static int Cmd_Echo_f (void)
+{
+	for (int i = 1; i != Cmd_Argc(); ++i) {
+		Com_Printf("%s ", Cmd_Argv(i));
+	}
+
+	return ERR_ENONE;
+}
+#endif
+
 #if defined(__GCC__)
 __attribute__ ((access (read_only, 1)))
 #endif
 int Cmd_AddCommand (const char *name, xcommand_t function)
 {
+	if (Cvar_VariableString(name)) {
+		Com_Printf("Cmd_AddCommand: %s already defined as a var\n", name);
+		return ERR_ENONE;
+	}
+
 	cmd_function_t *cmd = NULL;
 	for (cmd = cmd_functions; cmd; cmd = cmd->next) {
 		if (!strcmp(name, cmd->name)) {
@@ -297,6 +343,11 @@ int Cmd_Init (void)
 {
 	int rc;
 	rc = Cmd_AddCommand("cmdlist", Cmd_List_f);
+	if (rc != ERR_ENONE) {
+		return rc;
+	}
+
+	rc = Cmd_AddCommand("echo", Cmd_Echo_f);
 	if (rc != ERR_ENONE) {
 		return rc;
 	}

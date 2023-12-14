@@ -69,6 +69,19 @@ static cvar_t *Cvar_FindVar (const char *var_name)
 }
 
 #if defined(__GCC__)
+__attribute__ ((access (read_only, 1), nonull (1)))
+#endif
+const char *Cvar_VariableString (const char *var_name)
+{
+	cvar_t *var = Cvar_FindVar(var_name);
+	if (!var) {
+		return NULL;
+	} else {
+		return var->string;
+	}
+}
+
+#if defined(__GCC__)
 __attribute__ ((access (write_only, 1),
 		access (read_only, 2),
 		access (read_only, 3),
