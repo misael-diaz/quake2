@@ -39,4 +39,5 @@ clean:
 	@$(MAKE) -C com clean
 	@$(MAKE) -C cmd clean
 	@$(MAKE) -C cbuf clean
+	@$(MAKE) -C cvar clean
 	@$(MAKE) -C quake clean

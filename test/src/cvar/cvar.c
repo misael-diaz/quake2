@@ -104,16 +104,14 @@ int Cvar_Get (cvar_t *var, const char *var_name, const char *var_value, int cons
 	}
 
 	var = (cvar_t *) ptr;
-	var->name = NULL;
-	int rc = CopyString(var->name, var_name);
-	if (rc != ERR_ENONE) {
+	var->name = CopyString(var_name);
+	if (!var->name) {
 		Com_Error(ERR_FATAL, "Cvar_Get: failed to allocate var->name\n");
 		return ERR_FATAL;
 	}
 
-	var->string = NULL;
-	rc = CopyString(var->string, var_value);
-	if (rc != ERR_ENONE) {
+	var->string = CopyString(var_value);
+	if (!var->string) {
 		Com_Error(ERR_FATAL, "Cvar_Get: failed to allocaote var->string\n");
 		return ERR_FATAL;
 	}
@@ -158,11 +156,10 @@ int Cvar_FullSet (cvar_t *var,
 	}
 
 	var->string = Z_Free(var->string);
-
-	int const rc = CopyString(var->string, var_value);
-	if (rc != ERR_ENONE) {
+	var->string = CopyString(var_value);
+	if (!var->string) {
 		Com_Error(ERR_FATAL, "Cvar_FullSet: allocation error\n");
-		return rc;
+		return ERR_FATAL;
 	}
 
 	errno = 0;
@@ -229,36 +226,38 @@ static int Cvar_Set2Default (cvar_t *var, const char *var_name, const char *var_
 		if (Com_ServerState()) {
 
 			char msg[] = "Cvar_Set2: value %s of var %s will be "
-				"changed on the next game\n";
+				     "changed on the next game\n";
 			Com_Printf(msg, var_value, var_name);
 
-			int const rc = CopyString(var->latched_string, var_value);
-			if (rc != ERR_ENONE) {
+			var->latched_string = CopyString(var_value);
+			if (!var->latched_string) {
 				char errmsg[] = "Cvar_Set2: allocation error\n";
 				Com_Error(ERR_FATAL, errmsg);
-				return rc;
+				return ERR_FATAL;
 			}
 
 		} else {
 
 			var->string = Z_Free(var->string);
-			int const rc = CopyString(var->string, var_value);
-			if (rc != ERR_ENONE) {
+			var->string = CopyString(var_value);
+			if (!var->string) {
 				char errmsg[] = "Cvar_Set2: allocation error\n";
 				Com_Error(ERR_FATAL, errmsg);
-				return rc;
+				return ERR_FATAL;
 			}
 
 			errno = 0;
 //			var->value = atof(var_value);
 			var->value = strtof(var_value, NULL);
 			if (errno == ERANGE) {
-				char msg[] = "Cvar_Set2: cvar value %f overflows"
-					"float type\n";
+				char msg[] = "Cvar_Set2: cvar value %f overflows "
+					     "float type\n";
 				Com_Printf(msg, var_value);
 			}
 		}
 	}
+
+	return ERR_ENONE;
 }
 
 #if defined(__GCC__)
@@ -319,8 +318,8 @@ static int Cvar_Set2 (cvar_t *var,
 	}
 
 	var->string = Z_Free(var->string);
-	int rc = CopyString(var->string, var_value);
-	if (rc != ERR_ENONE) {
+	var->string = CopyString(var_value);
+	if (!var->string) {
 		Com_Error(ERR_FATAL, "Cvar_Set2: failed to allocaote var->string\n");
 		return ERR_FATAL;
 	}
