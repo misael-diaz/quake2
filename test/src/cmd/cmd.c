@@ -282,6 +282,30 @@ static int Cmd_Wait_f (void)
 	return ERR_ENONE;
 }
 
+#if defined(DEBUG) && DEBUG
+static int Cmd_Echo_f (void)
+{
+	if (Cmd_Argc()) {
+		Com_Printf("Cmd_Echo_f: %s ", Cmd_Argv(0));
+	}
+
+	for (int i = 1; i != Cmd_Argc(); ++i) {
+		Com_Printf("%s ", Cmd_Argv(i));
+	}
+
+	return ERR_ENONE;
+}
+#else
+static int Cmd_Echo_f (void)
+{
+	for (int i = 1; i != Cmd_Argc(); ++i) {
+		Com_Printf("%s ", Cmd_Argv(i));
+	}
+
+	return ERR_ENONE;
+}
+#endif
+
 #if defined(__GCC__)
 __attribute__ ((access (read_only, 1)))
 #endif
@@ -313,6 +337,11 @@ int Cmd_Init (void)
 {
 	int rc;
 	rc = Cmd_AddCommand("cmdlist", Cmd_List_f);
+	if (rc != ERR_ENONE) {
+		return rc;
+	}
+
+	rc = Cmd_AddCommand("echo", Cmd_Echo_f);
 	if (rc != ERR_ENONE) {
 		return rc;
 	}
