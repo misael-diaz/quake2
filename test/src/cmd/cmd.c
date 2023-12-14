@@ -85,7 +85,22 @@ match_t Cmd_SkipWhitespace (const char **string_p)
 	return rc;
 }
 
-void Cmd_CopyTokenString (const char *text)
+#if defined(DEBUG) && DEBUG
+void Cmd_CopyCMDArgs (const char *text)
+{
+	cmd_args[0] = '\0';
+	strcpy(cmd_args, text);
+	for (int i = (strlen(cmd_args) - 1); i >= 0; --i) {
+		if (cmd_args[i] <= ' ') {
+			cmd_args[i] = '\0';
+		} else {
+			break;
+		}
+	}
+	Com_Printf("Cmd_CopyCMDArgs: %s\n", cmd_args);
+}
+#else
+void Cmd_CopyCMDArgs (const char *text)
 {
 	cmd_args[0] = '\0';
 	strcpy(cmd_args, text);
@@ -97,6 +112,7 @@ void Cmd_CopyTokenString (const char *text)
 		}
 	}
 }
+#endif
 
 char *Cmd_Parse (const char **string_p)
 {
@@ -193,8 +209,8 @@ void Cmd_TokenizeString (const char **string_p)
 			break;
 		}
 
-		if (!num_tokens) {
-			Cmd_CopyTokenString(text);
+		if (num_tokens == 1) {
+			Cmd_CopyCMDArgs(text);
 		}
 
 		*string_p = text;
