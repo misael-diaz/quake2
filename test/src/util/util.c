@@ -172,21 +172,16 @@ __attribute__ ((access (write_only, 1),
 		access (read_only, 2)),
 		nonull (2))
 #endif
-int CopyString (char *dst, const char *src)
+char *CopyString (const char *src)
 {
-	if (dst) {
-		Com_Error(ERR_FATAL, "CopyString: placeholder must be NULL\n");
-		return ERR_FATAL;
-	}
-
 	int const sz = strlen(src) + 1;
 	void *ptr = Z_Malloc(sz);
 	if (!ptr) {
 		Com_Error(ERR_FATAL, "CopyString: memory allocation error\n");
-		return ERR_FATAL;
+		return NULL;
 	}
 
-	dst = (char *) ptr;
+	char *dst = ptr;
 	strcpy(dst, src);
-	return ERR_ENONE;
+	return dst;
 }

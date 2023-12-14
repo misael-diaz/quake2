@@ -22,6 +22,6 @@ CC = gcc-9
 CC = gcc
 
 # Linux LLVM C Compiler (clang) Options
-CCOPT = -std=gnu17 -g -Wall -O0
+CCOPT = -DDEBUG=1 -std=gnu17 -g -Wall -O0
 # Linux GNU C Compiler Options
-CCOPT = -std=gnu2x -g -Wall -Wextra -O0
+CCOPT = -DDEBUG=1 -std=gnu2x -g -Wall -Wextra -O0

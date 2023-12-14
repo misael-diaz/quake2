@@ -31,5 +31,7 @@ void Cmd_List_f(void);
 void Cmd_Wait_f(void);
 int  Cmd_AddCommand(const char *name, xcommand_t function);
 int  Cmd_Init(void);
+int  Cmd_Argc(void);
+char*Cmd_Argv(int const args);
 
 #endif

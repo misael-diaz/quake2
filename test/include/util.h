@@ -34,6 +34,6 @@ int   Z_TagFree(short const tag);
 void *Z_TagMalloc(int const sizeObj, short const tag);
 void *Z_Malloc(int size);
 
-int CopyString(char *dst, const char *src);
+char *CopyString(const char *src);
 
 #endif

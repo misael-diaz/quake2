@@ -30,6 +30,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #define ERR_ENONE 0x00000000
 #define ERR_FATAL 0xffffffff
 
+#define MAX_STRING_CHARS 1024
 #define MAX_TOKEN_CHARS 128
 #define MAX_STRING_TOKENS 80
 
