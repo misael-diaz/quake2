@@ -30,6 +30,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include "quake.h"
 #include "util.h"
 #include "com.h"
+#include "cvar.h"
 
 typedef struct cmd_function_s {
 	struct cmd_function_s *next;
@@ -311,6 +312,11 @@ __attribute__ ((access (read_only, 1)))
 #endif
 int Cmd_AddCommand (const char *name, xcommand_t function)
 {
+	if (Cvar_VariableString(name)) {
+		Com_Printf("Cmd_AddCommand: %s already defined as a var\n", name);
+		return ERR_ENONE;
+	}
+
 	cmd_function_t *cmd = NULL;
 	for (cmd = cmd_functions; cmd; cmd = cmd->next) {
 		if (!strcmp(name, cmd->name)) {
