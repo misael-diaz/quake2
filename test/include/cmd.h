@@ -26,12 +26,24 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 // source: cmd.h -- Quake script command processing module
 
-void Cmd_ExecuteString(const char *line);
-void Cmd_List_f(void);
-void Cmd_Wait_f(void);
-int  Cmd_AddCommand(const char *name, xcommand_t function);
-int  Cmd_Init(void);
-int  Cmd_Argc(void);
-char*Cmd_Argv(int const args);
+#ifdef GCC
+const char *Cmd_Argv(int const args)
+__attribute__ ((returns_nonnull));
+
+void Cmd_ExecuteString(const char *line)
+__attribute__ ((access (read_only, 1), nonnull (1)));
+
+int Cmd_AddCommand(const char *name, xcommand_t function)
+__attribute__ ((access (read_only, 1), nonnull (1, 2)));
+
+int Cmd_Init(void);
+int Cmd_Argc(void);
+#else
+const char *Cmd_Argv(int const args);
+void        Cmd_ExecuteString(const char *line);
+int         Cmd_AddCommand(const char *name, xcommand_t function);
+int         Cmd_Init(void);
+int         Cmd_Argc(void);
+#endif
 
 #endif

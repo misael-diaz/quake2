@@ -26,6 +26,24 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 // source: com.h -- client / server communications
 
+#ifdef GCC
+void Com_Printf(const char *fmt, ...)
+__attribute__ ((access (read_only, 1), nonnull (1), format (printf, 1, 2)));
+
+void Com_Error(int const code, const char *fmt, ...)
+__attribute__ ((access (read_only, 2), nonnull (2), format (printf, 2, 3)));
+
+int  Com_InitArgv(int const argc, const char **argv)
+__attribute__ ((access (read_only, 2), nonnull (2)));
+
+int  Com_AddParam(const char *parm)
+__attribute__ ((access (read_only, 1), nonnull (1)));
+
+int  Com_Argc(void);
+void Com_ClearArgv(int const i);
+const char *Com_Argv(int const i) __attribute__ ((returns_nonnull));
+int  Com_ServerState(void);
+#else
 void Com_Printf(const char* fmt, ...);
 void Com_Error(int const code, const char* fmt, ...);
 int  Com_InitArgv(int const argc, const char **argv);
@@ -34,5 +52,6 @@ int  Com_Argc(void);
 void Com_ClearArgv(int const i);
 const char *Com_Argv(int const i);
 int  Com_ServerState(void);
+#endif
 
 #endif
