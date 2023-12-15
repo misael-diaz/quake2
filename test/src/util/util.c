@@ -80,6 +80,35 @@ int Z_Init (void)
 	return ERR_ENONE;
 }
 
+const void *Z_FreeConst (const void *ptr)
+{
+	if (!ptr) {
+		return NULL;
+	}
+
+	zhead_t *z = ((zhead_t *) ptr) - 1;
+
+	if (z->magic != Z_MAGIC) {
+		Com_Error(ERR_FATAL, "Z_Free: bad magic\n");
+		return ptr;
+	}
+
+	if (z->prev) {
+		z->prev->next = z->next;
+	}
+
+	if (z->next) {
+		z->next->prev = z->prev;
+	}
+
+	--z_count;
+	z_bytes -= z->size;
+
+	free(z);
+	z = NULL;
+	return z;
+}
+
 void *Z_Free (void *ptr)
 {
 	if (!ptr) {
@@ -120,7 +149,7 @@ int Z_TagFree (short const tag)
 			void *ptr = ((void *) (z + 1));
 			ptr = Z_Free(ptr);
 			if (ptr) {
-				Com_Error(ERR_FATAL, "Z_TagFree\n");
+				Com_Error(ERR_FATAL, "Z_TagFree: error\n");
 				sw = True;
 			}
 		}
@@ -165,7 +194,7 @@ void *Z_Malloc (int size)
 	return Z_TagMalloc(size, tag);
 }
 
-char *CopyString (const char *src)
+const char *CopyString (const char *src)
 {
 	int const sz = strlen(src) + 1;
 	void *ptr = Z_Malloc(sz);

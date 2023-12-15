@@ -32,19 +32,22 @@ __attribute__ ((access (write_only, 1), access (read_only, 3), nonnull (1, 3),
 		format (printf, 3, 4)));
 
 int   Z_Init(void);
-void *Z_Free(void *ptr) __attribute__ ((access (read_write, 1)));
+void *Z_Free(void *ptr) __attribute__ ((access (read_only, 1)));
+const void *Z_FreeConst(const void *ptr) __attribute__ ((access (read_only, 1)));
 int   Z_TagFree(short const tag);
 void *Z_TagMalloc(int const sizeObj, short const tag);
 void *Z_Malloc(int size);
-char *CopyString(const char *src) __attribute__ ((access (read_only, 1), nonnull (1)));
+const char *CopyString(const char *src)
+__attribute__ ((access (read_only, 1), nonnull (1)));
 #else
 int   va(char *dst, int const size, const char *fmt, ...);
 int   Z_Init(void);
+const void *Z_FreeConst(const void *ptr);
 void *Z_Free(void *ptr);
 int   Z_TagFree(short const tag);
 void *Z_TagMalloc(int const sizeObj, short const tag);
 void *Z_Malloc(int size);
-char *CopyString(const char *src);
+const char *CopyString(const char *src);
 #endif
 
 #endif

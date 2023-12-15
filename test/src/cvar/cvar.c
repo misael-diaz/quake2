@@ -170,7 +170,7 @@ int Cvar_FullSet (const char *var_name, const char *var_value, int const flags)
 		userinfo_modified = True;
 	}
 
-	var->string = Z_Free(var->string);
+	var->string = Z_FreeConst(var->string);
 	var->string = CopyString(var_value);
 	if (!var->string) {
 		Com_Error(ERR_FATAL, "Cvar_FullSet: allocation error\n");
@@ -194,7 +194,7 @@ int Cvar_FullSet (const char *var_name, const char *var_value, int const flags)
 static int Cvar_Set2ForceFreeLatch (cvar_t *var)
 {
 	if (var->latched_string) {
-		var->latched_string = Z_Free(var->latched_string);
+		var->latched_string = Z_FreeConst(var->latched_string);
 	}
 
 	return ERR_ENONE;
@@ -216,7 +216,7 @@ static int Cvar_Set2Default (cvar_t *var, const char *var_name, const char *var_
 				return ERR_ENONE;
 			}
 
-			Z_Free(var->latched_string);
+			var->latched_string = Z_FreeConst(var->latched_string);
 
 		} else {
 
@@ -241,7 +241,7 @@ static int Cvar_Set2Default (cvar_t *var, const char *var_name, const char *var_
 
 		} else {
 
-			var->string = Z_Free(var->string);
+			var->string = Z_FreeConst(var->string);
 			var->string = CopyString(var_value);
 			if (!var->string) {
 				char errmsg[] = "Cvar_Set2: allocation error\n";
@@ -307,7 +307,7 @@ static int Cvar_Set2 (const char *var_name,
 		userinfo_modified = True;
 	}
 
-	var->string = Z_Free(var->string);
+	var->string = Z_FreeConst(var->string);
 	var->string = CopyString(var_value);
 	if (!var->string) {
 		Com_Error(ERR_FATAL, "Cvar_Set2: failed to allocaote var->string\n");

@@ -28,9 +28,9 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 typedef struct cvar_s {
 	struct cvar_s *next;
-	char *name;
-	char *string;
-	char *latched_string;
+	const char *name;
+	const char *string;
+	const char *latched_string;
 	qboolean modified;
 	float value;
 	int flags;
