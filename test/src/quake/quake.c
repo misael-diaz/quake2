@@ -39,9 +39,13 @@ int Quake_Free (void)
 	return Z_TagFree(0);
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_only, 2)))
+#ifdef GCC
+int Quake_Init (int const argc, const char **argv)
+__attribute__ ((access (read_only, 2), nonnull (2)));
+#else
+int Quake_Init (int const argc, const char **argv);
 #endif
+
 int Quake_Init (int const argc, const char **argv)
 {
 	int rc = 0;
@@ -88,9 +92,6 @@ int Quake_Init (int const argc, const char **argv)
 	return rc;
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_only, 2)))
-#endif
 int main (int const argc, const char **argv)
 {
 	int rc;

@@ -31,6 +31,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include "util.h"
 #include "com.h"
 #include "cvar.h"
+#include "cmd.h"
 
 typedef struct cmd_function_s {
 	struct cmd_function_s *next;
@@ -56,11 +57,11 @@ int Cmd_Argc (void)
 	return cmd_argc;
 }
 
-char *Cmd_Argv (int const args)
+const char *Cmd_Argv (int const args)
 {
 	int const argc = (args < 0)? -args : args;
 	if (argc >= cmd_argc) {
-		return NULL;
+		return "";
 	} else {
 		return cmd_argv[argc];
 	}
@@ -231,9 +232,6 @@ void Cmd_TokenizeString (const char **string_p)
 	}
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_only, 1)))
-#endif
 void Cmd_ExecuteString (const char *line)
 {
 #if defined(DEBUG) && DEBUG
@@ -307,12 +305,9 @@ static int Cmd_Echo_f (void)
 }
 #endif
 
-#if defined(__GCC__)
-__attribute__ ((access (read_only, 1)))
-#endif
 int Cmd_AddCommand (const char *name, xcommand_t function)
 {
-	if (Cvar_VariableString(name)) {
+	if (Cvar_VariableString(name)[0]) {
 		Com_Printf("Cmd_AddCommand: %s already defined as a var\n", name);
 		return ERR_ENONE;
 	}

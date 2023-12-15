@@ -27,14 +27,35 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // source: cbuf.h -- Quake command buffer
 
+#ifdef GCC
+void SZ_Init(sizebuf_t *buf, byte *data, int length)
+__attribute__ ((access (read_write, 1), access (read_only, 2), nonnull (1, 2)));
+
+void SZ_Clear(sizebuf_t* buf)
+__attribute__ ((access (read_write, 1), nonnull (1)));
+
+void *SZ_GetSpace(sizebuf_t *buf, int length)
+__attribute__ ((access (read_write, 1), nonnull (1)));
+
+int SZ_Write(sizebuf_t *buf, const void *src, int length)
+__attribute__ ((access (read_write, 1), access (read_only, 2), nonnull (1, 2)));
+
+int Cbuf_AddText(const char *text)
+__attribute__ ((access (read_only, 1), nonnull (1)));
+
+int Cbuf_Init(void);
+int Cbuf_AddEarlyCommands(qboolean clear);
+int Cbuf_Execute(void);
+#else
 void SZ_Init(sizebuf_t *buf, byte *data, int length);
 void SZ_Clear(sizebuf_t* buf);
 void *SZ_GetSpace(sizebuf_t *buf, int length);
-int SZ_Write(sizebuf_t *buf, const void *src, int length);
+int  SZ_Write(sizebuf_t *buf, const void *src, int length);
 
-int Cbuf_Init(void);
-int Cbuf_AddText(const char *text);
-int Cbuf_AddEarlyCommands(qboolean clear);
-int Cbuf_Execute(void);
+int  Cbuf_AddText(const char *text);
+int  Cbuf_Init(void);
+int  Cbuf_AddEarlyCommands(qboolean clear);
+int  Cbuf_Execute(void);
+#endif
 
 #endif

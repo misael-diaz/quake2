@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "com.h"
 #include "util.h"
 #include "cmd.h"
+#include "cbuf.h"
 
 #define MAX_CMD_LEN 0x800
 #define MAX_SZBUF_LEN (4 * MAX_CMD_LEN)
@@ -39,9 +40,6 @@ static sizebuf_t cmd_text;
 static byte cmd_text_buf[MAX_SZBUF_LEN];
 extern qboolean cmd_wait;
 
-#if defined(__GCC__)
-__attribute__ ((access (write_only, 1), access (read_only, 2)))
-#endif
 void SZ_Init (sizebuf_t *buf, byte *data, int length)
 {
 	memset(buf, 0, sizeof(sizebuf_t));
@@ -53,18 +51,12 @@ void SZ_Init (sizebuf_t *buf, byte *data, int length)
 	buf->cursize = 0;
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_write, 1)))
-#endif
 void SZ_Clear (sizebuf_t* buf)
 {
 	buf->overflowed = False;
 	buf->cursize = 0;
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_write, 1)))
-#endif
 void *SZ_GetSpace (sizebuf_t *buf, int length)
 {
 	if ((buf->cursize + length) >= buf->maxsize) {
@@ -90,9 +82,6 @@ void *SZ_GetSpace (sizebuf_t *buf, int length)
 	return data;
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_write, 1), access (read_only, 2)))
-#endif
 int SZ_Write (sizebuf_t *buf, const void *src, int length)
 {
 	void *dst = SZ_GetSpace(buf, length);
@@ -106,10 +95,6 @@ int SZ_Write (sizebuf_t *buf, const void *src, int length)
 	return ERR_ENONE;
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_only, 1)))
-#endif
-
 int Cbuf_Init (void)
 {
 	memset(cmd_text_buf, 0, sizeof(cmd_text_buf));
@@ -117,9 +102,6 @@ int Cbuf_Init (void)
 	return ERR_ENONE;
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_only, 1)))
-#endif
 int Cbuf_AddText (const char *text)
 {
 	int const length = strlen(text);

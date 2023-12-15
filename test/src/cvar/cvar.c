@@ -33,13 +33,37 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include "util.h"
 #include "com.h"
 #include "cmd.h"
+#include "cvar.h"
 
 static cvar_t *cvars = NULL;
 static qboolean userinfo_modified = False;
 
-#if defined(__GCC__)
-__attribute__ ((access (read_only, 1), nonull (1)))
+#ifdef GCC
+static qboolean Cvar_InfoValidate(const char *string)
+__attribute__ ((access (read_only, 1), nonnull (1)));
+
+static cvar_t *Cvar_FindVar(const char *var_name)
+__attribute__ ((access (read_only, 1), nonnull (1)));
+
+static int Cvar_Set2ForceFreeLatch(cvar_t *var)
+__attribute__ ((access (read_write, 1), nonnull (1)));
+
+static int Cvar_Set2Default (cvar_t *var, const char *var_name, const char *var_value)
+__attribute__ ((access (read_write, 1),
+		access (read_only, 2),
+		access (read_only, 3),
+		nonnull (1, 2, 3)));
+
+static int Cvar_Set2(const char *var_name, const char *var_value, qboolean const force)
+__attribute__ ((access (read_only, 1), access (read_only, 2), nonnull (1, 2)));
+#else
+static qboolean Cvar_InfoValidate(const char *string);
+static cvar_t *Cvar_FindVar(const char *var_name);
+static int Cvar_Set2ForceFreeLatch(cvar_t *var);
+static int Cvar_Set2Default(cvar_t *var, const char *var_name, const char *var_value);
+static int Cvar_Set2(const char *var_name, const char *var_value, qboolean const force);
 #endif
+
 static qboolean Cvar_InfoValidate (const char *string)
 {
 	if (strstr(string, "\\")) {
@@ -53,9 +77,6 @@ static qboolean Cvar_InfoValidate (const char *string)
 	}
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_only, 1), nonull (1)))
-#endif
 static cvar_t *Cvar_FindVar (const char *var_name)
 {
 	cvar_t *var = NULL;
@@ -68,34 +89,18 @@ static cvar_t *Cvar_FindVar (const char *var_name)
 	return var;
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_only, 1), nonull (1)))
-#endif
 const char *Cvar_VariableString (const char *var_name)
 {
 	cvar_t *var = Cvar_FindVar(var_name);
 	if (!var) {
-		return NULL;
+		return "\0";
 	} else {
 		return var->string;
 	}
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (write_only, 1),
-		access (read_only, 2),
-		access (read_only, 3),
-		nonnull (2, 3)))
-#endif
-int Cvar_Get (cvar_t *var, const char *var_name, const char *var_value, int const flags)
+int Cvar_Get (const char *var_name, const char *var_value, int const flags)
 {
-	if (var) {
-		char errmsg[] = "Cvar_Get: expects `var` placeholder to be NULL\n";
-		Com_Error(ERR_FATAL, errmsg);
-		return ERR_FATAL;
-	}
-
-	var = NULL;
 	if (flags & (CVAR_USERINFO | CVAR_SERVERINFO)) {
 		if (!Cvar_InfoValidate(var_value)) {
 			char *msg = "Cvar_Get: invalid info cvar name %s cvar value %s\n";
@@ -104,7 +109,7 @@ int Cvar_Get (cvar_t *var, const char *var_name, const char *var_value, int cons
 		}
 	}
 
-	var = Cvar_FindVar(var_name);
+	cvar_t *var = Cvar_FindVar(var_name);
 	if (var) {
 		var->flags |= flags;
 		return ERR_ENONE;
@@ -116,7 +121,7 @@ int Cvar_Get (cvar_t *var, const char *var_name, const char *var_value, int cons
 		return ERR_FATAL;
 	}
 
-	var = (cvar_t *) ptr;
+	var = (cvar_t*) ptr;
 	var->name = CopyString(var_name);
 	if (!var->name) {
 		Com_Error(ERR_FATAL, "Cvar_Get: failed to allocate var->name\n");
@@ -137,7 +142,7 @@ int Cvar_Get (cvar_t *var, const char *var_name, const char *var_value, int cons
 //	var->value = atof(var_value);
 	var->value = strtof(var_value, NULL);
 	if (errno == ERANGE) {
-		Com_Printf("Cvar_Get: cvar value %f overflows float type\n", var_value);
+		Com_Printf("Cvar_Get: cvar value %s overflows float type\n", var_value);
 	}
 
 	var->flags = flags;
@@ -148,14 +153,11 @@ int Cvar_Get (cvar_t *var, const char *var_name, const char *var_value, int cons
 	return ERR_ENONE;
 }
 
-int Cvar_FullSet (cvar_t *var,
-		  const char *var_name,
-		  const char *var_value,
-		  int const flags)
+int Cvar_FullSet (const char *var_name, const char *var_value, int const flags)
 {
-	var = Cvar_FindVar(var_name);
+	cvar_t *var = Cvar_FindVar(var_name);
 	if (!var) {
-		int const rc = Cvar_Get(var, var_name, var_value, flags);
+		int const rc = Cvar_Get(var_name, var_value, flags);
 		if (rc != ERR_ENONE) {
 			Com_Error(ERR_FATAL, "Cvar_FullSet: error\n");
 			return rc;
@@ -179,7 +181,7 @@ int Cvar_FullSet (cvar_t *var,
 //	var->value = atof(var_value);
 	var->value = strtof(var_value, NULL);
 	if (errno == ERANGE) {
-		const char errmsg[] = "Cvar_FullSet: cvar value %f overflows "
+		const char errmsg[] = "Cvar_FullSet: cvar value %s overflows "
 			              "float type\n";
 		Com_Printf(errmsg, var_value);
 	}
@@ -189,12 +191,6 @@ int Cvar_FullSet (cvar_t *var,
 	return ERR_ENONE;
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_write, 1),
-		access (read_only, 2),
-		access (read_only, 3),
-		nonull (1, 2, 3)))
-#endif
 static int Cvar_Set2ForceFreeLatch (cvar_t *var)
 {
 	if (var->latched_string) {
@@ -204,12 +200,6 @@ static int Cvar_Set2ForceFreeLatch (cvar_t *var)
 	return ERR_ENONE;
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_write, 1),
-		access (read_only, 2),
-		access (read_only, 3),
-		nonull (1, 2, 3)))
-#endif
 static int Cvar_Set2Default (cvar_t *var, const char *var_name, const char *var_value)
 {
 	if (var->flags & CVAR_NOSET) {
@@ -263,7 +253,7 @@ static int Cvar_Set2Default (cvar_t *var, const char *var_name, const char *var_
 //			var->value = atof(var_value);
 			var->value = strtof(var_value, NULL);
 			if (errno == ERANGE) {
-				char msg[] = "Cvar_Set2: cvar value %f overflows "
+				char msg[] = "Cvar_Set2: cvar value %s overflows "
 					     "float type\n";
 				Com_Printf(msg, var_value);
 			}
@@ -273,26 +263,13 @@ static int Cvar_Set2Default (cvar_t *var, const char *var_name, const char *var_
 	return ERR_ENONE;
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_write, 1),
-		access (read_only, 2),
-		access (read_only, 3),
-		nonull (2, 3)))
-#endif
-static int Cvar_Set2 (cvar_t *var,
-	              const char *var_name,
+static int Cvar_Set2 (const char *var_name,
 	              const char *var_value,
 	              qboolean const force)
 {
-	if (var) {
-		char errmsg[] = "Cvar_Set2: expects `var` placeholder to be NULL\n";
-		Com_Error(ERR_FATAL, errmsg);
-		return ERR_FATAL;
-	}
-
-	var = Cvar_FindVar(var_name);
+	cvar_t *var = Cvar_FindVar(var_name);
 	if (!var) {
-		return Cvar_Get(var, var_name, var_value, 0);
+		return Cvar_Get(var_name, var_value, 0);
 	}
 
 	if (var->flags & (CVAR_USERINFO | CVAR_SERVERINFO)) {
@@ -341,36 +318,21 @@ static int Cvar_Set2 (cvar_t *var,
 //	var->value = atof(var_value);
 	var->value = strtof(var_value, NULL);
 	if (errno == ERANGE) {
-		Com_Printf("Cvar_Set2: cvar value %f overflows float type\n", var_value);
+		Com_Printf("Cvar_Set2: cvar value %s overflows float type\n", var_value);
 	}
 
 	return ERR_ENONE;
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_write, 1),
-		access (read_only, 2),
-		access (read_only, 3),
-		nonull (2, 3)))
-#endif
-int Cvar_Set (cvar_t *var,
-	      const char *var_name,
-	      const char *var_value)
+int Cvar_Set (const char *var_name, const char *var_value)
 {
-	if (var) {
-		char errmsg[] = "Cvar_Set: expects `var` placeholder to be NULL\n";
-		Com_Error(ERR_FATAL, errmsg);
-		return ERR_FATAL;
-	}
-
 	qboolean const force_free_latch = False;
-	return Cvar_Set2(var, var_name, var_value, force_free_latch);
+	return Cvar_Set2(var_name, var_value, force_free_latch);
 }
 
 static int Cvar_Set_f (void)
 {
 	int args = Cmd_Argc();
-	cvar_t *var = NULL;
 	if (args != 3 && args != 4) {
 		Com_Printf("Cvar_Set_f: usage: set <variable> <value> [u|s]\n");
 		return ERR_ENONE;
@@ -378,7 +340,7 @@ static int Cvar_Set_f (void)
 
 	if (args == 3) {
 
-		int const rc = Cvar_Set(var, Cmd_Argv(1), Cmd_Argv(2));
+		int const rc = Cvar_Set(Cmd_Argv(1), Cmd_Argv(2));
 		if (rc != ERR_ENONE) {
 			Com_Error(ERR_FATAL, "Set_Var_f: error\n");
 			return rc;
@@ -393,7 +355,7 @@ static int Cvar_Set_f (void)
 
 		qboolean const userinfo = (!strcmp(Cmd_Argv(3), "u"));
 		int const flags = (userinfo)? CVAR_USERINFO : CVAR_SERVERINFO;
-		int const rc = Cvar_FullSet(var, Cmd_Argv(1), Cmd_Argv(2), flags);
+		int const rc = Cvar_FullSet(Cmd_Argv(1), Cmd_Argv(2), flags);
 		if (rc != ERR_ENONE) {
 			Com_Error(ERR_FATAL, "Set_Var_f: error\n");
 			return rc;

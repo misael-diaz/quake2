@@ -31,6 +31,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include "q_shared.h"
 #include "quake.h"
 #include "com.h"
+#include "util.h"
 
 #define STDC17 GNU_STD17
 #define Z_MAGIC 0x1d1d
@@ -47,11 +48,8 @@ static zhead_t z_chain;
 static int z_count = 0;
 static int z_bytes = 0;
 
-#if (__GCC__ > 12) && (__STDC_VERSION__ > STDC17)
-__attribute__ ((access (write_only, 1),
-		access (read_only, 3)),
-		nonnull (1, 3))
-int va (char *dst, int const size, const char *fmt, ...)
+#if (__GNUC__ > 12) && (__STDC_VERSION__ > STDC17)
+int va (char * __restrict__ dst, int const size, const char * __restrict__ fmt, ...)
 {
 	va_list args;
 	va_start(args);
@@ -61,7 +59,7 @@ int va (char *dst, int const size, const char *fmt, ...)
 	return rc;
 }
 #else
-int va (char *dst, int const size, const char *fmt, ...)
+int va (char * __restrict__ dst, int const size, const char * __restrict__ fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
@@ -167,11 +165,6 @@ void *Z_Malloc (int size)
 	return Z_TagMalloc(size, tag);
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (write_only, 1),
-		access (read_only, 2)),
-		nonull (2))
-#endif
 char *CopyString (const char *src)
 {
 	int const sz = strlen(src) + 1;

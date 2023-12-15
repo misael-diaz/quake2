@@ -21,12 +21,15 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
+// source: com.h -- client/server communications
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 
 #include "q_shared.h"
+#include "com.h"
 
 #define STDC17 GNU_STD17
 
@@ -36,16 +39,19 @@ static int server_state = 0;
 static int com_argc = 0;
 static const char *com_argv[MAX_NUM_ARGVS];
 
-#if defined(__GCC__)
-__attribute__ ((access (read_write, 1), access (read_only, 2)))
+#ifdef GCC
+static void Com_Base (FILE *stream, const char *fmt, va_list args)
+__attribute__ ((access (write_only, 1), access (read_only, 2), nonnull (1, 2)));
+#else
+static void Com_Base (FILE *stream, const char *fmt, va_list args);
 #endif
-void Com_Base (FILE *stream, const char *fmt, va_list args)
+
+static void Com_Base (FILE *stream, const char *fmt, va_list args)
 {
 	vfprintf(stream, fmt, args);
 }
 
-#if (__GCC__ > 12) && (__STDC_VERSION__ > STDC17)
-__attribute__ ((access (read_only, 1)))
+#if (__GNUC__ > 12) && (__STDC_VERSION__ > STDC17)
 void Com_Printf (const char* fmt, ...)
 {
 	va_list args;
@@ -63,8 +69,7 @@ void Com_Printf (const char* fmt, ...)
 }
 #endif
 
-#if (__GCC__ > 12) && (__STDC_VERSION__ > STDC17)
-__attribute__ ((access (read_only, 2)))
+#if (__GNUC__ > 12) && (__STDC_VERSION__ > STDC17)
 void Com_Error (int const code, const char* fmt, ...)
 {
 	va_list args;
@@ -82,9 +87,6 @@ void Com_Error (int const code, const char* fmt, ...)
 }
 #endif
 
-#if defined(__GCC__)
-__attribute__ ((access (read_only, 2)))
-#endif
 int Com_InitArgv (int const argc, const char **argv)
 {
 	com_argc = argc;
@@ -109,9 +111,6 @@ int Com_InitArgv (int const argc, const char **argv)
 	return ERR_ENONE;
 }
 
-#if defined(__GCC__)
-__attribute__ ((access (read_only, 1)))
-#endif
 int Com_AddParam (const char *parm)
 {
 	if (com_argc == MAX_NUM_ARGVS) {

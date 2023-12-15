@@ -26,22 +26,26 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 // source: cvar.h -- dynamic command
 
-char *Cvar_VariableString(const char *var_name);
+#ifdef GCC
+const char *Cvar_VariableString(const char *var_name)
+__attribute__ ((access (read_only, 1), nonnull (1), returns_nonnull));
 
-int Cvar_Get(cvar_t *var,
-	     const char *var_name,
-	     const char *var_value,
-	     int const flags);
+int Cvar_Get(const char *var_name, const char *var_value, int const flags)
+__attribute__ ((access (read_only, 1), access (read_only, 2), nonnull (1, 2)));
 
-int Cvar_FullSet(cvar_t *var,
-		 const char *var_name,
-		 const char *var_value,
-		 int const flags);
+int Cvar_FullSet(const char *var_name, const char *var_value, int const flags)
+__attribute__ ((access (read_only, 1), access (read_only, 2), nonnull (1, 2)));
 
-int Cvar_Set(cvar_t *var,
-	     const char *var_name,
-	     const char *var_value);
+int Cvar_Set(const char *var_name, const char *var_value)
+__attribute__ ((access (read_only, 1), nonnull (1, 2)));
 
 int Cvar_Init(void);
+#else
+const char *Cvar_VariableString(const char *var_name);
+int Cvar_Get(const char *var_name, const char *var_value, int const flags);
+int Cvar_FullSet(const char *var_name, const char *var_value, int const flags);
+int Cvar_Set(const char *var_name, const char *var_value);
+int Cvar_Init(void);
+#endif
 
 #endif
