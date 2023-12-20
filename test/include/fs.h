@@ -1,5 +1,5 @@
-#ifndef GUARD_QUAKE_SHARED_H
-#define GUARD_QUAKE_SHARED_H
+#ifndef GUARD_QUAKE_FS_H
+#define GUARD_QUAKE_FS_H
 
 /*
 
@@ -24,23 +24,16 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// source: q_shared.h -- included by all program modules
+// source: fs.h -- Quake File System FS
 
-#define GNU_STD17 201710L
-#define ERR_ENONE 0x00000000
-#define ERR_FATAL 0xffffffff
+#ifdef GCC
+int FS_SetGameDir(const char *dir)
+__attribute__ ((access (read_only, 1), nonnull (1)));
 
-#define MAX_STRING_CHARS 1024
-#define MAX_TOKEN_CHARS 128
-#define MAX_STRING_TOKENS 80
-#define MAX_OSPATH 128
-#define MAX_QPATH 64
-
-#define CVAR_USERINFO 2
-#define CVAR_SERVERINFO 4
-#define CVAR_NOSET 8
-#define CVAR_LATCH 16
-
-#define BASEDIRNAME "baseq2"
+int FS_InitFileSystem(void);
+#else
+int FS_SetGameDir(const char *dir);
+int FS_Init(void);
+#endif
 
 #endif

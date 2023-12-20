@@ -89,6 +89,18 @@ static cvar_t *Cvar_FindVar (const char *var_name)
 	return var;
 }
 
+const cvar_t *Cvar_FindVarConst (const char *var_name)
+{
+	const cvar_t *var = NULL;
+	for (var = cvars; var; var = var->next) {
+		if (!strcmp(var_name, var->name)) {
+			break;
+		}
+	}
+
+	return var;
+}
+
 const char *Cvar_VariableString (const char *var_name)
 {
 	cvar_t *var = Cvar_FindVar(var_name);
@@ -257,6 +269,8 @@ static int Cvar_Set2Default (cvar_t *var, const char *var_name, const char *var_
 					     "float type\n";
 				Com_Printf(msg, var_value);
 			}
+
+//			TODO: FS_SetGameDir() if var->name is `game` and FS_ExecAutoExec()
 		}
 	}
 

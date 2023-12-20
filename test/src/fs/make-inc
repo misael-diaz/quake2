@@ -1,7 +1,7 @@
 #
 # Quake-II						December 05, 2023
 #
-# source: test/src/quake/make-inc
+# source: test/src/fs/make-inc
 # author: @misael-diaz
 #
 # Synopsis:
@@ -20,37 +20,19 @@ Q_SHARED_H = ../../include/q_shared.h
 QUAKE_H    = ../../include/quake.h
 COM_H      = ../../include/com.h
 UTIL_H     = ../../include/util.h
-CMD_H      = ../../include/cmd.h
 CBUF_H     = ../../include/cbuf.h
+CMD_H      = ../../include/cmd.h
 CVAR_H     = ../../include/cvar.h
-FS_H       = ../../include/fs.h
 HEADERS = $(Q_SHARED_H)\
 	  $(QUAKE_H)\
 	  $(COM_H)\
 	  $(UTIL_H)\
-	  $(CMD_H)\
 	  $(CBUF_H)\
-	  $(CVAR_H)\
-	  $(FS_H)
+	  $(CMD_H)\
+	  $(CVAR_H)
 
 # sources
-QUAKE_C = quake.c
+FS_C = fs.c
 
 # objects
-COM_O   = ../../src/com/com.o 
-UTIL_O  = ../../src/util/util.o 
-CMD_O   = ../../src/cmd/cmd.o 
-CBUF_O  = ../../src/cbuf/cbuf.o 
-CVAR_O  = ../../src/cvar/cvar.o
-FS_O    = ../../src/fs/fs.o
-QUAKE_O = ../../src/quake/quake.o
-OBJS = $(COM_O)\
-       $(UTIL_O)\
-       $(CMD_O)\
-       $(CBUF_O)\
-       $(CVAR_O)\
-       $(FS_O)\
-       $(QUAKE_O)
-
-# binaries
-QUAKE = quake.bin
+FS_O = fs.o
