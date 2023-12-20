@@ -31,7 +31,10 @@ cbufs: coms cmds
 cvars: coms utils cmds
 	@$(MAKE) -C cvar
 
-Quake: coms utils cmds cbufs cvars
+filesystems: coms utils cmds cbufs cvars
+	@$(MAKE) -C fs
+
+Quake: coms utils cmds cbufs cvars filesystems
 	@$(MAKE) -C quake
 
 clean:
@@ -40,4 +43,5 @@ clean:
 	@$(MAKE) -C cmd clean
 	@$(MAKE) -C cbuf clean
 	@$(MAKE) -C cvar clean
+	@$(MAKE) -C fs clean
 	@$(MAKE) -C quake clean

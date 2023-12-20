@@ -32,6 +32,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include "cmd.h"
 #include "cbuf.h"
 #include "cvar.h"
+#include "fs.h"
 
 int Quake_Free (void)
 {
@@ -83,6 +84,12 @@ int Quake_Init (int const argc, const char **argv)
 	}
 
 	rc = Cbuf_Execute();
+	if (rc != ERR_ENONE) {
+		Quake_Free();
+		return rc;
+	}
+
+	rc = FS_InitFileSystem();
 	if (rc != ERR_ENONE) {
 		Quake_Free();
 		return rc;

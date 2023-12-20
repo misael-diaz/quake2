@@ -27,6 +27,9 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 // source: cvar.h -- dynamic command
 
 #ifdef GCC
+const cvar_t *Cvar_FindVarConst(const char *var_name)
+__attribute__ ((access (read_only, 1), nonnull (1)));
+
 const char *Cvar_VariableString(const char *var_name)
 __attribute__ ((access (read_only, 1), nonnull (1), returns_nonnull));
 
