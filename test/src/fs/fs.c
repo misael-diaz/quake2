@@ -283,10 +283,11 @@ static int FS_CloseFile (FILE **file)
 #endif
 
 #if defined(DEBUG) && DEBUG
-int FS_FreeFile (char **data)
+int FS_FreeFile (void **vdata)
 {
-	if (*data) {
-		*data = Z_Free(*data);
+	void *data = *vdata;
+	if (data) {
+		data = Z_Free(data);
 	} else {
 		Com_Printf("FS_FreeFile: no resources allocated for file\n");
 	}
@@ -294,20 +295,21 @@ int FS_FreeFile (char **data)
 	return ERR_ENONE;
 }
 #else
-int FS_FreeFile (char **data)
+int FS_FreeFile (void **vdata)
 {
-	*data = Z_Free(*data);
+	void *data = *vdata;
+	data = Z_Free(data);
 	return ERR_ENONE;
 }
 #endif
 
-int FS_LoadFile (const char *filename, char **data)
+int FS_LoadFile (const char *filename, void **vdata)
 {
 	int rc;
 	FILE *fhandle[] = {NULL};
 	rc = FS_OpenFile(filename, fhandle);
 	if (!*fhandle) {
-		*data = NULL;
+		*vdata = NULL;
 		Com_Printf("FS_LoadFile: file %s not found\n", filename);
 		return ERR_ENONE;
 	}
@@ -316,20 +318,20 @@ int FS_LoadFile (const char *filename, char **data)
 //	TODO: check if accounting for the NULL char here break things elsewhere
 	void *ptr = Z_Malloc(len + 1); // we need to allot memory for the NULL char
 	if (!ptr) {
-		*data = NULL;
+		*vdata = NULL;
 		Com_Error(ERR_FATAL, "FS_LoadFile: malloc error\n");
 		return ERR_FATAL;
 	}
 
 	size_t const sz = fread(ptr, 1, len, *fhandle);
 	if (sz != len) {
-		*data = NULL;
+		*vdata = NULL;
 		Com_Printf("FS_LoadFile: failed to read file %s\n", filename);
 		return ERR_ENONE;
 	}
 
-	*data = (char*) ptr;
-	*data[len] = '\0'; // appends NULL for executing script via Cmd_Exec_f()
+	byte *data = ptr;
+	data[len] = '\0'; // appends NULL for executing script via Cmd_Exec_f()
 
 	rc = FS_CloseFile(fhandle);
 	if (rc != ERR_ENONE) {
