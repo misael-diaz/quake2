@@ -76,13 +76,16 @@ static const cvar_t *cddir = NULL;
 static void FS_Unlink(filelink_t *this, filelink_t **prev)
 __attribute__ ((access (read_write, 1), access (read_write, 2), nonnull (1, 2)));
 
-static qboolean FS_ValidFileName (const char *f)
+static qboolean FS_ValidFileName(const char *f)
 __attribute__ ((access (read_only, 1), nonnull (1)));
 
-static int FS_AddGameDirectory (const char *dir)
+static int FS_AddGameDirectory(const char *dir)
 __attribute__ ((access (read_only, 1), nonnull (1)));
 
-static int FS_SearchFile (const char *filename, FILE **file)
+static qboolean FS_ValidData(const byte *data)
+__attribute__ ((access (read_only, 1), nonnull (1)));
+
+static int FS_SearchFile(const char *filename, FILE **file)
 __attribute__ ((access (read_only, 1), access (read_write, 2), nonnull (1, 2)));
 
 static int FS_CloseFile(FILE **file)
@@ -91,6 +94,7 @@ __attribute__ ((access (read_write, 1), nonnull (1)));
 static void FS_Unlink(filelink_t *this, filelink_t **prev);
 static qboolean FS_ValidFileName(const char *f);
 static int FS_AddGameDirectory(const char *dir);
+static qboolean FS_ValidData(const byte *data);
 static int FS_SearchFile(const char *filename, FILE **file);
 static int FS_CloseFile(FILE **file);
 #endif
@@ -303,6 +307,27 @@ int FS_FreeFile (void **vdata)
 }
 #endif
 
+static qboolean FS_ValidChar (unsigned int const c)
+{
+	return ((c < 127)? True : False);
+}
+
+static qboolean FS_ValidData (const byte *data)
+{
+	unsigned int c;
+	const byte *d = data;
+	while ((c = *d)) {
+
+		if (!FS_ValidChar(c)) {
+			return False;
+		}
+
+		++d;
+	}
+
+	return True;
+}
+
 int FS_LoadFile (const char *filename, void **vdata)
 {
 	int rc;
@@ -332,6 +357,11 @@ int FS_LoadFile (const char *filename, void **vdata)
 
 	byte *data = ptr;
 	data[len] = '\0'; // appends NULL for executing script via Cmd_Exec_f()
+
+	if (!FS_ValidData(data)) {
+		Com_Error(ERR_FATAL, "FS_LoadFile: found invalid data in file\n");
+		return ERR_FATAL;
+	}
 
 	rc = FS_CloseFile(fhandle);
 	if (rc != ERR_ENONE) {
