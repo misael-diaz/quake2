@@ -36,6 +36,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define MAX_CMD_LEN 0x800
 #define MAX_SZBUF_LEN (4 * MAX_CMD_LEN)
 
+#ifdef GCC
+static qboolean Cbuf_ValidChar(int const c);
+static qboolean Cbuf_ValidText(const char *text)
+__attribute__ ((access (read_only, 1), nonnull (1)));
+#else
+static qboolean Cbuf_ValidChar(int const c);
+static qboolean Cbuf_ValidText(const char *text);
+#endif
+
 static sizebuf_t cmd_text;
 static byte cmd_text_buf[MAX_SZBUF_LEN];
 extern qboolean cmd_wait;
@@ -102,14 +111,45 @@ int Cbuf_Init (void)
 	return ERR_ENONE;
 }
 
+static qboolean Cbuf_ValidChar (int const c)
+{
+	return ((c >= 0 && c < 127)? True : False);
+}
+
+static qboolean Cbuf_ValidText (const char *text)
+{
+	int c;
+	const char *t = text;
+	while ((c = *t)) {
+
+		if (!Cbuf_ValidChar(c)) {
+			return False;
+		}
+
+		++t;
+	}
+
+	return True;
+}
+
 int Cbuf_AddText (const char *text)
 {
+	if (!Cbuf_ValidText(text)) {
+		Com_Error(ERR_FATAL, "Cbuf_AddText: invalid text found\n");
+		return ERR_FATAL;
+	}
+
 	int const length = strlen(text);
 	return SZ_Write(&cmd_text, text, length);
 }
 
 int Cbuf_InsertText (const char *text)
 {
+	if (!Cbuf_ValidText(text)) {
+		Com_Error(ERR_FATAL, "Cbuf_AddText: invalid text found\n");
+		return ERR_FATAL;
+	}
+
 	Com_Printf("Cbuf_InsertText: NOT YET IMPLEMENTED\n");
 	return ERR_ENONE;
 }
