@@ -76,13 +76,16 @@ static const cvar_t *cddir = NULL;
 static void FS_Unlink(filelink_t *this, filelink_t **prev)
 __attribute__ ((access (read_write, 1), access (read_write, 2), nonnull (1, 2)));
 
-static qboolean FS_ValidFileName (const char *f)
+static qboolean FS_ValidFileName(const char *f)
 __attribute__ ((access (read_only, 1), nonnull (1)));
 
-static int FS_AddGameDirectory (const char *dir)
+static int FS_AddGameDirectory(const char *dir)
 __attribute__ ((access (read_only, 1), nonnull (1)));
 
-static int FS_SearchFile (const char *filename, FILE **file)
+static qboolean FS_ValidData(const byte *data)
+__attribute__ ((access (read_only, 1), nonnull (1)));
+
+static int FS_SearchFile(const char *filename, FILE **file)
 __attribute__ ((access (read_only, 1), access (read_write, 2), nonnull (1, 2)));
 
 static int FS_CloseFile(FILE **file)
@@ -91,6 +94,7 @@ __attribute__ ((access (read_write, 1), nonnull (1)));
 static void FS_Unlink(filelink_t *this, filelink_t **prev);
 static qboolean FS_ValidFileName(const char *f);
 static int FS_AddGameDirectory(const char *dir);
+static qboolean FS_ValidData(const byte *data);
 static int FS_SearchFile(const char *filename, FILE **file);
 static int FS_CloseFile(FILE **file);
 #endif
@@ -283,10 +287,11 @@ static int FS_CloseFile (FILE **file)
 #endif
 
 #if defined(DEBUG) && DEBUG
-int FS_FreeFile (char **data)
+int FS_FreeFile (void **vdata)
 {
-	if (*data) {
-		*data = Z_Free(*data);
+	void *data = *vdata;
+	if (data) {
+		data = Z_Free(data);
 	} else {
 		Com_Printf("FS_FreeFile: no resources allocated for file\n");
 	}
@@ -294,20 +299,42 @@ int FS_FreeFile (char **data)
 	return ERR_ENONE;
 }
 #else
-int FS_FreeFile (char **data)
+int FS_FreeFile (void **vdata)
 {
-	*data = Z_Free(*data);
+	void *data = *vdata;
+	data = Z_Free(data);
 	return ERR_ENONE;
 }
 #endif
 
-int FS_LoadFile (const char *filename, char **data)
+static qboolean FS_ValidChar (unsigned int const c)
+{
+	return ((c < 127)? True : False);
+}
+
+static qboolean FS_ValidData (const byte *data)
+{
+	unsigned int c;
+	const byte *d = data;
+	while ((c = *d)) {
+
+		if (!FS_ValidChar(c)) {
+			return False;
+		}
+
+		++d;
+	}
+
+	return True;
+}
+
+int FS_LoadFile (const char *filename, void **vdata)
 {
 	int rc;
 	FILE *fhandle[] = {NULL};
 	rc = FS_OpenFile(filename, fhandle);
 	if (!*fhandle) {
-		*data = NULL;
+		*vdata = NULL;
 		Com_Printf("FS_LoadFile: file %s not found\n", filename);
 		return ERR_ENONE;
 	}
@@ -316,20 +343,25 @@ int FS_LoadFile (const char *filename, char **data)
 //	TODO: check if accounting for the NULL char here break things elsewhere
 	void *ptr = Z_Malloc(len + 1); // we need to allot memory for the NULL char
 	if (!ptr) {
-		*data = NULL;
+		*vdata = NULL;
 		Com_Error(ERR_FATAL, "FS_LoadFile: malloc error\n");
 		return ERR_FATAL;
 	}
 
 	size_t const sz = fread(ptr, 1, len, *fhandle);
 	if (sz != len) {
-		*data = NULL;
+		*vdata = NULL;
 		Com_Printf("FS_LoadFile: failed to read file %s\n", filename);
 		return ERR_ENONE;
 	}
 
-	*data = (char*) ptr;
-	*data[len] = '\0'; // appends NULL for executing script via Cmd_Exec_f()
+	byte *data = ptr;
+	data[len] = '\0'; // appends NULL for executing script via Cmd_Exec_f()
+
+	if (!FS_ValidData(data)) {
+		Com_Error(ERR_FATAL, "FS_LoadFile: found invalid data in file\n");
+		return ERR_FATAL;
+	}
 
 	rc = FS_CloseFile(fhandle);
 	if (rc != ERR_ENONE) {

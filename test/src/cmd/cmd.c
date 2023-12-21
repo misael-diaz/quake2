@@ -287,21 +287,24 @@ static int Cmd_Exec_f (void)
 		return ERR_ENONE;
 	}
 
-	char *data[] = {NULL};
+	byte *data[] = {NULL};
+	void *vptr = data;
+	void *vdata[] = {vptr};
 	const char *filename = Cmd_Argv(1);
-	rc = FS_LoadFile(filename, data);
+	rc = FS_LoadFile(filename, vdata);
 	if (!*data) {
 		Com_Printf("Cmd_Exec_f: cannot execute script\n");
 		return ERR_ENONE;
 	}
 
-	rc = Cbuf_InsertText(*data);
+	const char *text = *vdata;
+	rc = Cbuf_InsertText(text);
 	if (rc != ERR_ENONE) {
 		Com_Error(ERR_FATAL, "Cmd_Exec_f: failed to add script to cmd buffer\n");
 		return rc;
 	}
 
-	rc = FS_FreeFile(data);
+	rc = FS_FreeFile(vdata);
 	if (rc != ERR_ENONE) {
 		Com_Error(ERR_FATAL, "Cmd_Exec_f: malloc error\n");
 		return rc;

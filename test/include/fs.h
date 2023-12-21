@@ -30,17 +30,17 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 int FS_SetGameDir(const char *dir)
 __attribute__ ((access (read_only, 1), nonnull (1)));
 
-int FS_FreeFile(char **data)
+int FS_FreeFile(void **vdata)
 __attribute__ ((access (read_write, 1), nonnull (1)));
 
-int FS_LoadFile(const char *filename, char **data)
+int FS_LoadFile(const char *filename, void **vdata)
 __attribute__ ((access (read_only, 1), access (read_write, 2), nonnull (1, 2)));
 
 int FS_InitFileSystem(void);
 #else
 int FS_SetGameDir(const char *dir);
-int FS_FreeFile(char **data);
-int FS_LoadFile(const char *filename, char **data)
+int FS_FreeFile(void **vdata);
+int FS_LoadFile(const char *filename, void **vdata)
 int FS_Init(void);
 #endif
 
