@@ -25,6 +25,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 
 #include "q_shared.h"
 #include "quake.h"
@@ -33,6 +34,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include "cmd.h"
 #include "cbuf.h"
 #include "cvar.h"
+#include "fs.h"
 
 typedef struct {
 	char name[MAX_QPATH];
@@ -56,7 +58,7 @@ typedef struct filelink_s {
 
 typedef struct searchpath_s {
 	struct searchpath_s *next;
-	const char *filename;
+	const char *dirname;
 	pack_t *pack;
 } searchpath_t;
 
@@ -79,10 +81,18 @@ __attribute__ ((access (read_only, 1), nonnull (1)));
 
 static int FS_AddGameDirectory (const char *dir)
 __attribute__ ((access (read_only, 1), nonnull (1)));
+
+static int FS_SearchFile (const char *filename, FILE **file)
+__attribute__ ((access (read_only, 1), access (read_write, 2), nonnull (1, 2)));
+
+static int FS_CloseFile(FILE **file)
+__attribute__ ((access (read_write, 1), nonnull (1)));
 #else
 static void FS_Unlink(filelink_t *this, filelink_t **prev);
-static qboolean FS_ValidFileName (const char *f);
-static int FS_AddGameDirectory (const char *dir);
+static qboolean FS_ValidFileName(const char *f);
+static int FS_AddGameDirectory(const char *dir);
+static int FS_SearchFile(const char *filename, FILE **file);
+static int FS_CloseFile(FILE **file);
 #endif
 
 static void FS_Unlink (filelink_t *this, filelink_t **prev)
@@ -172,7 +182,7 @@ static int FS_Path_f (void)
 			int const numfiles = sp->pack->numfiles;
 			Com_Printf("FS_Path_f: pack %s files %d\n", filename, numfiles);
 		} else {
-			Com_Printf("FS_Path_f: file %s\n", sp->filename);
+			Com_Printf("FS_Path_f: dir %s\n", sp->dirname);
 		}
 	}
 
@@ -186,17 +196,147 @@ static int FS_Path_f (void)
 
 static int FS_AddGameDirectory (const char *dir)
 {
-	strcpy(fs_gamedir, dir);
+	int rc;
+	char const fmt[] = "%s";
+	rc = va(fs_gamedir, sizeof(fs_gamedir), fmt, dir);
+	if (rc != ERR_ENONE) {
+		Com_Error(ERR_FATAL, "FS_AddGameDirectory: string overflow error\n");
+		return rc;
+	}
+
 	searchpath_t *sp = Z_Malloc(sizeof(searchpath_t));
 	if (!sp) {
 		Com_Error(ERR_FATAL, "FS_AddGameDirectory: path allocation error\n");
 		return ERR_FATAL;
 	}
 //	TODO: consider adding code for loading pack files
-	sp->filename = fs_gamedir;
+	sp->dirname = fs_gamedir;
 	sp->pack = NULL; // we don't have any pack files so no need to look them up
 	sp->next = searchpaths;
 	searchpaths = sp;
+	return ERR_ENONE;
+}
+
+static long FS_FileLength (FILE *f)
+{
+	long const pos = ftell(f);
+	fseek(f, 0, SEEK_END);
+	long const end = ftell(f);
+	fseek(f, pos, SEEK_SET);
+	return end;
+}
+
+static int FS_SearchFile (const char *filename, FILE **file)
+{
+	int rc;
+	char fullpath[MAX_OSPATH];
+	for (const searchpath_t *sp = searchpaths; sp; sp = sp->next)
+	{
+		rc = va(fullpath, sizeof(fullpath), "%s/%s", sp->dirname, filename);
+		if (rc != ERR_ENONE) {
+			Com_Error(ERR_FATAL, "FS_SearchFile: overflow error\n");
+			return rc;
+		}
+
+		FILE *f = fopen(fullpath, "r");
+		if (!f) {
+			const char msg[] = "FS_SearchFile: issue %s with file %s\n";
+			Com_Printf(msg, strerror(errno), fullpath);
+			continue;
+		}
+
+		*file = f;
+		Com_Printf("FS_SearchFile: %s has been successfully openned\n", fullpath);
+		return ERR_ENONE;
+	}
+
+	return ERR_ENONE;
+}
+
+int FS_OpenFile (const char *filename, FILE **file)
+{
+	return FS_SearchFile(filename, file);
+}
+
+#if defined(DEBUG) && DEBUG
+static int FS_CloseFile (FILE **file)
+{
+	if (*file) {
+		fclose(*file);
+		*file = NULL;
+	} else {
+		Com_Printf("FS_CloseFile: file was not openned\n");
+	}
+
+	return ERR_ENONE;
+}
+#else
+static int FS_CloseFile (FILE **file)
+{
+	if (*file) {
+		fclose(*file);
+		*file = NULL;
+	}
+
+	return ERR_ENONE;
+}
+#endif
+
+#if defined(DEBUG) && DEBUG
+int FS_FreeFile (char **data)
+{
+	if (*data) {
+		*data = Z_Free(*data);
+	} else {
+		Com_Printf("FS_FreeFile: no resources allocated for file\n");
+	}
+
+	return ERR_ENONE;
+}
+#else
+int FS_FreeFile (char **data)
+{
+	*data = Z_Free(*data);
+	return ERR_ENONE;
+}
+#endif
+
+int FS_LoadFile (const char *filename, char **data)
+{
+	int rc;
+	FILE *fhandle[] = {NULL};
+	rc = FS_OpenFile(filename, fhandle);
+	if (!*fhandle) {
+		*data = NULL;
+		Com_Printf("FS_LoadFile: file %s not found\n", filename);
+		return ERR_ENONE;
+	}
+
+	size_t const len = FS_FileLength(*fhandle);
+//	TODO: check if accounting for the NULL char here break things elsewhere
+	void *ptr = Z_Malloc(len + 1); // we need to allot memory for the NULL char
+	if (!ptr) {
+		*data = NULL;
+		Com_Error(ERR_FATAL, "FS_LoadFile: malloc error\n");
+		return ERR_FATAL;
+	}
+
+	size_t const sz = fread(ptr, 1, len, *fhandle);
+	if (sz != len) {
+		*data = NULL;
+		Com_Printf("FS_LoadFile: failed to read file %s\n", filename);
+		return ERR_ENONE;
+	}
+
+	*data = (char*) ptr;
+	*data[len] = '\0'; // appends NULL for executing script via Cmd_Exec_f()
+
+	rc = FS_CloseFile(fhandle);
+	if (rc != ERR_ENONE) {
+		Com_Error(ERR_FATAL, "FS_LoadFile: failed to close file %s\n", filename);
+		return rc;
+	}
+
 	return ERR_ENONE;
 }
 

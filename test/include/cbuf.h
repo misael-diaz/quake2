@@ -40,6 +40,9 @@ __attribute__ ((access (read_write, 1), nonnull (1)));
 int SZ_Write(sizebuf_t *buf, const void *src, int length)
 __attribute__ ((access (read_write, 1), access (read_only, 2), nonnull (1, 2)));
 
+int Cbuf_InsertText(const char *text)
+__attribute__ ((access (read_only, 1), nonnull (1)));
+
 int Cbuf_AddText(const char *text)
 __attribute__ ((access (read_only, 1), nonnull (1)));
 
@@ -52,6 +55,7 @@ void SZ_Clear(sizebuf_t* buf);
 void *SZ_GetSpace(sizebuf_t *buf, int length);
 int  SZ_Write(sizebuf_t *buf, const void *src, int length);
 
+int  Cbuf_InsertText(const char *text);
 int  Cbuf_AddText(const char *text);
 int  Cbuf_Init(void);
 int  Cbuf_AddEarlyCommands(qboolean clear);

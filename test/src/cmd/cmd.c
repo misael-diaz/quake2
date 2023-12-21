@@ -31,7 +31,9 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include "util.h"
 #include "com.h"
 #include "cvar.h"
+#include "cbuf.h"
 #include "cmd.h"
+#include "fs.h"
 
 typedef struct cmd_function_s {
 	struct cmd_function_s *next;
@@ -275,6 +277,39 @@ static int Cmd_List_f (void)
 	return ERR_ENONE;
 }
 
+static int Cmd_Exec_f (void)
+{
+	int rc;
+	if (Cmd_Argc() != 2) {
+		const char msg[] = "Cmd_Exec_f: usage: exec <filename> "
+				   "(for executing a script)\n";
+		Com_Printf(msg);
+		return ERR_ENONE;
+	}
+
+	char *data[] = {NULL};
+	const char *filename = Cmd_Argv(1);
+	rc = FS_LoadFile(filename, data);
+	if (!*data) {
+		Com_Printf("Cmd_Exec_f: cannot execute script\n");
+		return ERR_ENONE;
+	}
+
+	rc = Cbuf_InsertText(*data);
+	if (rc != ERR_ENONE) {
+		Com_Error(ERR_FATAL, "Cmd_Exec_f: failed to add script to cmd buffer\n");
+		return rc;
+	}
+
+	rc = FS_FreeFile(data);
+	if (rc != ERR_ENONE) {
+		Com_Error(ERR_FATAL, "Cmd_Exec_f: malloc error\n");
+		return rc;
+	}
+
+	return ERR_ENONE;
+}
+
 static int Cmd_Wait_f (void)
 {
 	cmd_wait = True;
@@ -338,6 +373,11 @@ int Cmd_Init (void)
 {
 	int rc;
 	rc = Cmd_AddCommand("cmdlist", Cmd_List_f);
+	if (rc != ERR_ENONE) {
+		return rc;
+	}
+
+	rc = Cmd_AddCommand("exec", Cmd_Exec_f);
 	if (rc != ERR_ENONE) {
 		return rc;
 	}

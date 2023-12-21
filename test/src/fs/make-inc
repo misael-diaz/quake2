@@ -23,13 +23,15 @@ UTIL_H     = ../../include/util.h
 CBUF_H     = ../../include/cbuf.h
 CMD_H      = ../../include/cmd.h
 CVAR_H     = ../../include/cvar.h
+FS_H       = ../../include/fs.h
 HEADERS = $(Q_SHARED_H)\
 	  $(QUAKE_H)\
 	  $(COM_H)\
 	  $(UTIL_H)\
 	  $(CBUF_H)\
 	  $(CMD_H)\
-	  $(CVAR_H)
+	  $(CVAR_H)\
+	  $(FS_H)
 
 # sources
 FS_C = fs.c
