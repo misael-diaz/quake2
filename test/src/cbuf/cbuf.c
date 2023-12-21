@@ -108,6 +108,12 @@ int Cbuf_AddText (const char *text)
 	return SZ_Write(&cmd_text, text, length);
 }
 
+int Cbuf_InsertText (const char *text)
+{
+	Com_Printf("Cbuf_InsertText: NOT YET IMPLEMENTED\n");
+	return ERR_ENONE;
+}
+
 int Cbuf_AddEarlyCommands (qboolean clear)
 {
 	int rc;

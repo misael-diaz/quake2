@@ -20,10 +20,12 @@ Q_SHARED_H = ../../include/q_shared.h
 QUAKE_H    = ../../include/quake.h
 UTIL_H     = ../../include/util.h
 COM_H      = ../../include/com.h
+FS_H       = ../../include/fs.h
 HEADERS = $(Q_SHARED_H)\
 	  $(QUAKE_H)\
 	  $(UTIL_H)\
-	  $(COM_H)
+	  $(COM_H)\
+	  $(FS_H)
 
 # sources
 CMD_C = cmd.c
