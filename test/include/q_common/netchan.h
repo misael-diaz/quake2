@@ -1,5 +1,5 @@
-#ifndef GUARD_QUAKE_COMMON_H
-#define GUARD_QUAKE_COMMON_H
+#ifndef GUARD_QUAKE_NETCHAN_H
+#define GUARD_QUAKE_NETCHAN_H
 
 /*
 
@@ -24,15 +24,12 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// source: common.h
+// source: netchan.h -- Quake Network Channel
 
-#include "q_common/com.h"
-#include "q_common/util.h"
-#include "q_common/cmd.h"
-#include "q_common/cbuf.h"
-#include "q_common/cvar.h"
-#include "q_common/fs.h"
-#include "q_common/netchan.h"
-#include "q_common/init.h"
+#ifdef GCC
+int Netchan_Init(void);
+#else
+int Netchan_Init(void);
+#endif
 
 #endif

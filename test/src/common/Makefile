@@ -19,6 +19,9 @@ all: Quake
 coms:
 	@$(MAKE) -C com
 
+netchannels:
+	@$(MAKE) -C netchan
+
 utils: coms
 	@$(MAKE) -C util
 
@@ -34,12 +37,13 @@ cvars: coms utils cmds
 filesystems: coms utils cmds cbufs cvars
 	@$(MAKE) -C fs
 
-Quake: coms utils cmds cbufs cvars filesystems
+Quake: coms utils cmds cbufs cvars filesystems netchannels
 	@$(MAKE) -C quake
 
 clean:
 	@$(MAKE) -C util clean
 	@$(MAKE) -C com clean
+	@$(MAKE) -C netchan clean
 	@$(MAKE) -C cmd clean
 	@$(MAKE) -C cbuf clean
 	@$(MAKE) -C cvar clean
