@@ -1,5 +1,5 @@
-#ifndef GUARD_QUAKE_NETCHAN_H
-#define GUARD_QUAKE_NETCHAN_H
+#ifndef GUARD_QUAKE_SERVER_H
+#define GUARD_QUAKE_SERVER_H
 
 /*
 
@@ -24,20 +24,12 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// source: netchan.h -- Quake Network Channel
+// source: server.h
 
 #ifdef GCC
-sizebuf_t *Netchan_NetMessage(void)
-__attribute__ ((returns_nonnull));
-
-byte *Netchan_NetMessageBuffer(void)
-__attribute__ ((returns_nonnull));
-
-int Netchan_Init(void);
+int SV_Init(void);
 #else
-sizebuf_t *Netchan_NetMessage(void);
-byte *Netchan_NetMessageBuffer(void);
-int Netchan_Init(void);
+int SV_Init(void);
 #endif
 
 #endif

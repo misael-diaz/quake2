@@ -1,8 +1,8 @@
 #!/usr/bin/make
 #
-# Quake-II					December 05, 2023
+# Quake-II						December 05, 2023
 #
-# source: test/Makefile
+# source: test/src/server/Makefile
 # author: @misael-diaz
 #
 # Synopsis:
@@ -14,18 +14,12 @@
 # (at your option) any later version.
 #
 
-all: Quake
+include make-inc
 
-QuakeCommon:
-	@$(MAKE) -C common
+all: $(SERVER_O)
 
-servers: QuakeCommon
-	@$(MAKE) -C server
-
-Quake: QuakeCommon servers
-	@$(MAKE) -C main
+$(SERVER_O): $(HEADERS) $(SERVER_C)
+	$(CC) $(INC) $(CCOPT) -c $(SERVER_C) -o $(SERVER_O)
 
 clean:
-	@$(MAKE) -C common clean
-	@$(MAKE) -C server clean
-	@$(MAKE) -C main clean
+	/bin/rm -f *.o

@@ -36,6 +36,8 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #define MAX_OSPATH 128
 #define MAX_QPATH 64
 
+#define MAX_MSGLEN 1024
+
 #define CVAR_USERINFO 2
 #define CVAR_SERVERINFO 4
 #define CVAR_NOSET 8

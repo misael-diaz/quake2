@@ -31,7 +31,19 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include "q_types.h"
 #include "q_common.h"
 
+static sizebuf_t net_message;
+static byte net_message_buffer[MAX_MSGLEN];
 static const cvar_t *qport = NULL;
+
+sizebuf_t *Netchan_NetMessage (void)
+{
+	return &net_message;
+}
+
+byte *Netchan_NetMessageBuffer (void)
+{
+	return net_message_buffer;
+}
 
 int Netchan_Init (void)
 {
