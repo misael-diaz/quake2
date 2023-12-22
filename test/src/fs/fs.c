@@ -532,7 +532,11 @@ int FS_InitFileSystem (void)
 		return rc;
 	}
 
-	va(fs_basedir, sizeof(fs_basedir), "%s", basedir->string);
+	rc = va(fs_basedir, sizeof(fs_basedir), "%s", basedir->string);
+	if (rc != ERR_ENONE) {
+		Com_Error(ERR_FATAL, "FS_InitFileSystem: string overflow error\n");
+		return rc;
+	}
 
 	rc = Cvar_Get("cddir", "", CVAR_NOSET);
 	if (rc != ERR_ENONE) {
