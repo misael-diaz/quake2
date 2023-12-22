@@ -21,73 +21,34 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// source: quake.c -- Quake initializer
+// source: netchan.c -- Quake Network Channel
 
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
 
 #include "q_shared.h"
 #include "q_types.h"
 #include "q_common.h"
 
-int Quake_Free (void)
+static const cvar_t *qport = NULL;
+
+int Netchan_Init (void)
 {
-	return Z_TagFree(0);
-}
-
-int Quake_Init (int const argc, const char **argv)
-{
-	int rc = 0;
-	rc = Z_Init();
+	int rc;
+	// we are going to channel via the loopback interface so no need of random ports
+	const char port[] = "2023";
+	rc = Cvar_Get("qport", port, CVAR_NOSET);
 	if (rc != ERR_ENONE) {
+		Com_Error(ERR_FATAL, "Netchan_Init: malloc error\n");
 		return rc;
 	}
 
-	rc = Com_InitArgv(argc, argv);
-	if (rc != ERR_ENONE) {
-		return rc;
+	qport = Cvar_FindVarConst("qport");
+	if (!qport) {
+		Com_Error(ERR_FATAL, "Netchan_Init: \n");
+		return ERR_FATAL;
 	}
 
-	rc = Cbuf_Init();
-	if (rc != ERR_ENONE) {
-		return rc;
-	}
-
-	rc = Cmd_Init();
-	if (rc != ERR_ENONE) {
-		Quake_Free();
-		return rc;
-	}
-
-	rc = Cvar_Init();
-	if (rc != ERR_ENONE) {
-		Quake_Free();
-		return rc;
-	}
-
-	qboolean clear = False;
-	rc = Cbuf_AddEarlyCommands(clear);
-	if (rc != ERR_ENONE) {
-		Quake_Free();
-		return rc;
-	}
-
-	rc = Cbuf_Execute();
-	if (rc != ERR_ENONE) {
-		Quake_Free();
-		return rc;
-	}
-
-	rc = FS_InitFileSystem();
-	if (rc != ERR_ENONE) {
-		Quake_Free();
-		return rc;
-	}
-
-	rc = Netchan_Init();
-	if (rc != ERR_ENONE) {
-		Quake_Free();
-		return rc;
-	}
-
-	return rc;
+	return ERR_ENONE;
 }

@@ -33,6 +33,7 @@ CMD_O   = ../../src/common/cmd/cmd.o
 CBUF_O  = ../../src/common/cbuf/cbuf.o
 CVAR_O  = ../../src/common/cvar/cvar.o
 FS_O    = ../../src/common/fs/fs.o
+NETCHAN_O = ../../src/common/netchan/netchan.o
 QUAKE_O = ../../src/common/quake/quake.o
 MAIN_O  = ../../src/main/main.o
 OBJS = $(COM_O)\
@@ -41,6 +42,7 @@ OBJS = $(COM_O)\
        $(CBUF_O)\
        $(CVAR_O)\
        $(FS_O)\
+       $(NETCHAN_O)\
        $(QUAKE_O)\
        $(MAIN_O)
 
