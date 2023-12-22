@@ -27,12 +27,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 #include "q_shared.h"
 #include "quake.h"
-#include "com.h"
-#include "util.h"
-#include "cmd.h"
-#include "cbuf.h"
-#include "cvar.h"
-#include "fs.h"
+#include "common.h"
 
 int Quake_Free (void)
 {

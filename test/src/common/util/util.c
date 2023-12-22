@@ -30,8 +30,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 #include "q_shared.h"
 #include "quake.h"
-#include "com.h"
-#include "util.h"
+#include "common.h"
 
 #define STDC17 GNU_STD17
 #define Z_MAGIC 0x1d1d

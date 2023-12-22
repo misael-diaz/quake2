@@ -28,12 +28,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 #include "q_shared.h"
 #include "quake.h"
-#include "util.h"
-#include "com.h"
-#include "cvar.h"
-#include "cbuf.h"
-#include "cmd.h"
-#include "fs.h"
+#include "common.h"
 
 typedef struct cmd_function_s {
 	struct cmd_function_s *next;

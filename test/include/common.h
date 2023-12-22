@@ -1,3 +1,6 @@
+#ifndef GUARD_QUAKE_COMMON_H
+#define GUARD_QUAKE_COMMON_H
+
 /*
 
 Derived from Quake-II
@@ -21,28 +24,14 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// source: main.c -- main program
+// source: common.h
 
-#include <stdio.h>
+#include "common/com.h"
+#include "common/util.h"
+#include "common/cmd.h"
+#include "common/cbuf.h"
+#include "common/cvar.h"
+#include "common/fs.h"
+#include "common/init.h"
 
-#include "q_shared.h"
-#include "quake.h"
-#include "common.h"
-
-int main (int const argc, const char **argv)
-{
-	int rc;
-	rc = Quake_Init(argc, argv);
-	if (rc != ERR_ENONE) {
-		return rc;
-	}
-
-//	printf("%s\n", com_argv[0]);
-
-	rc = Quake_Free();
-	if (rc != ERR_ENONE) {
-		return rc;
-	}
-
-	return 0;
-}
+#endif

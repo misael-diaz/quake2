@@ -18,20 +18,10 @@ INC = -I../../../include
 # headers
 Q_SHARED_H = ../../../include/q_shared.h
 QUAKE_H    = ../../../include/quake.h
-COM_H      = ../../../include/com.h
-UTIL_H     = ../../../include/util.h
-CMD_H      = ../../../include/cmd.h
-CBUF_H     = ../../../include/cbuf.h
-CVAR_H     = ../../../include/cvar.h
-FS_H       = ../../../include/fs.h
+COMMON_H   = ../../../include/common.h
 HEADERS = $(Q_SHARED_H)\
 	  $(QUAKE_H)\
-	  $(COM_H)\
-	  $(UTIL_H)\
-	  $(CMD_H)\
-	  $(CBUF_H)\
-	  $(CVAR_H)\
-	  $(FS_H)
+	  $(COMMON_H)
 
 # sources
 QUAKE_C = quake.c

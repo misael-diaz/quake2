@@ -28,10 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "q_shared.h"
 #include "quake.h"
-#include "com.h"
-#include "util.h"
-#include "cmd.h"
-#include "cbuf.h"
+#include "common.h"
 
 #define MAX_CMD_LEN 0x800
 #define MAX_SZBUF_LEN (4 * MAX_CMD_LEN)
