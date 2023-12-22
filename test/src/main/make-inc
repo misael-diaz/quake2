@@ -35,6 +35,7 @@ CVAR_O    = ../../src/common/cvar/cvar.o
 FS_O      = ../../src/common/fs/fs.o
 NETCHAN_O = ../../src/common/netchan/netchan.o
 QUAKE_O   = ../../src/common/quake/quake.o
+SERVER_O  = ../../src/server/server.o
 MAIN_O    = ../../src/main/main.o
 OBJS = $(COM_O)\
        $(UTIL_O)\
@@ -44,6 +45,7 @@ OBJS = $(COM_O)\
        $(FS_O)\
        $(NETCHAN_O)\
        $(QUAKE_O)\
+       $(SERVER_O)\
        $(MAIN_O)
 
 # binaries

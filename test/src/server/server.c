@@ -1,6 +1,3 @@
-#ifndef GUARD_QUAKE_NETCHAN_H
-#define GUARD_QUAKE_NETCHAN_H
-
 /*
 
 Derived from Quake-II
@@ -24,20 +21,17 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// source: netchan.h -- Quake Network Channel
+// source: server.c
 
-#ifdef GCC
-sizebuf_t *Netchan_NetMessage(void)
-__attribute__ ((returns_nonnull));
+#include "q_shared.h"
+#include "q_types.h"
+#include "q_common.h"
+#include "server.h"
 
-byte *Netchan_NetMessageBuffer(void)
-__attribute__ ((returns_nonnull));
-
-int Netchan_Init(void);
-#else
-sizebuf_t *Netchan_NetMessage(void);
-byte *Netchan_NetMessageBuffer(void);
-int Netchan_Init(void);
-#endif
-
-#endif
+int SV_Init (void)
+{
+	sizebuf_t *net_message = Netchan_NetMessage();
+	byte *net_message_buffer = Netchan_NetMessageBuffer();
+	SZ_Init(net_message, net_message_buffer, MAX_MSGLEN);
+	return ERR_ENONE;
+}

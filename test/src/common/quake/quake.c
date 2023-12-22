@@ -28,6 +28,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include "q_shared.h"
 #include "q_types.h"
 #include "q_common.h"
+#include "server.h"
 
 int Quake_Free (void)
 {
@@ -84,6 +85,12 @@ int Quake_Init (int const argc, const char **argv)
 	}
 
 	rc = Netchan_Init();
+	if (rc != ERR_ENONE) {
+		Quake_Free();
+		return rc;
+	}
+
+	rc = SV_Init();
 	if (rc != ERR_ENONE) {
 		Quake_Free();
 		return rc;
