@@ -37,20 +37,4 @@ HEADERS = $(Q_SHARED_H)\
 QUAKE_C = quake.c
 
 # objects
-COM_O   = ../../../src/common/com/com.o
-UTIL_O  = ../../../src/common/util/util.o
-CMD_O   = ../../../src/common/cmd/cmd.o
-CBUF_O  = ../../../src/common/cbuf/cbuf.o
-CVAR_O  = ../../../src/common/cvar/cvar.o
-FS_O    = ../../../src/common/fs/fs.o
-QUAKE_O = ../../../src/common/quake/quake.o
-OBJS = $(COM_O)\
-       $(UTIL_O)\
-       $(CMD_O)\
-       $(CBUF_O)\
-       $(CVAR_O)\
-       $(FS_O)\
-       $(QUAKE_O)
-
-# binaries
-QUAKE = quake.bin
+QUAKE_O = quake.o

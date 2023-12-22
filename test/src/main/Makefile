@@ -2,7 +2,7 @@
 #
 # Quake-II						December 05, 2023
 #
-# source: test/src/quake/Makefile
+# source: test/src/main/Makefile
 # author: @misael-diaz
 #
 # Synopsis:
@@ -16,10 +16,13 @@
 
 include make-inc
 
-all: $(QUAKE_O)
+all: $(MAIN)
 
-$(QUAKE_O): $(HEADERS) $(QUAKE_C)
-	$(CC) $(INC) $(CCOPT) -c $(QUAKE_C) -o $(QUAKE_O)
+$(MAIN): $(MAIN_O)
+	$(CC) $(CCOPT) $(OBJS) -o $(MAIN)
+
+$(MAIN_O): $(HEADERS) $(MAIN_C)
+	$(CC) $(INC) $(CCOPT) -c $(MAIN_C) -o $(MAIN_O)
 
 clean:
-	/bin/rm -f *.o
+	/bin/rm -f *.o $(MAIN)

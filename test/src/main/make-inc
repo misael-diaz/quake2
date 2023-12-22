@@ -1,0 +1,58 @@
+#
+# Quake-II						December 05, 2023
+#
+# source: test/src/main/make-inc
+# author: @misael-diaz
+#
+# Synopsis:
+# Defines the include file for building the program with GNU make.
+#
+# Copyright (c) 2023 Misael Diaz-Maldonado
+# This file is released under the GNU General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+
+INC = -I../../include
+
+# headers
+Q_SHARED_H = ../../include/q_shared.h
+QUAKE_H    = ../../include/quake.h
+COM_H      = ../../include/com.h
+UTIL_H     = ../../include/util.h
+CMD_H      = ../../include/cmd.h
+CBUF_H     = ../../include/cbuf.h
+CVAR_H     = ../../include/cvar.h
+FS_H       = ../../include/fs.h
+HEADERS = $(Q_SHARED_H)\
+	  $(QUAKE_H)\
+	  $(COM_H)\
+	  $(UTIL_H)\
+	  $(CMD_H)\
+	  $(CBUF_H)\
+	  $(CVAR_H)\
+	  $(FS_H)
+
+# sources
+MAIN_C = main.c
+
+# objects
+COM_O   = ../../src/common/com/com.o
+UTIL_O  = ../../src/common/util/util.o
+CMD_O   = ../../src/common/cmd/cmd.o
+CBUF_O  = ../../src/common/cbuf/cbuf.o
+CVAR_O  = ../../src/common/cvar/cvar.o
+FS_O    = ../../src/common/fs/fs.o
+QUAKE_O = ../../src/common/quake/quake.o
+MAIN_O  = ../../src/main/main.o
+OBJS = $(COM_O)\
+       $(UTIL_O)\
+       $(CMD_O)\
+       $(CBUF_O)\
+       $(CVAR_O)\
+       $(FS_O)\
+       $(QUAKE_O)\
+       $(MAIN_O)
+
+# binaries
+MAIN = quake.bin

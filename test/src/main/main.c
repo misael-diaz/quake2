@@ -21,7 +21,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// source: quake.c -- Quake initializer
+// source: main.c -- main program
 
 #include <stdio.h>
 
@@ -34,59 +34,29 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include "cvar.h"
 #include "fs.h"
 
-int Quake_Free (void)
+int Quake_Free(void);
+
+#ifdef GCC
+int Quake_Init(int const argc, const char **argv)
+__attribute__ ((access (read_only, 2), nonnull (2)));
+#else
+int Quake_Init(int const argc, const char **argv);
+#endif
+
+int main (int const argc, const char **argv)
 {
-	return Z_TagFree(0);
-}
-
-int Quake_Init (int const argc, const char **argv)
-{
-	int rc = 0;
-	rc = Z_Init();
+	int rc;
+	rc = Quake_Init(argc, argv);
 	if (rc != ERR_ENONE) {
 		return rc;
 	}
 
-	rc = Com_InitArgv(argc, argv);
+//	printf("%s\n", com_argv[0]);
+
+	rc = Quake_Free();
 	if (rc != ERR_ENONE) {
 		return rc;
 	}
 
-	rc = Cbuf_Init();
-	if (rc != ERR_ENONE) {
-		return rc;
-	}
-
-	rc = Cmd_Init();
-	if (rc != ERR_ENONE) {
-		Quake_Free();
-		return rc;
-	}
-
-	rc = Cvar_Init();
-	if (rc != ERR_ENONE) {
-		Quake_Free();
-		return rc;
-	}
-
-	qboolean clear = False;
-	rc = Cbuf_AddEarlyCommands(clear);
-	if (rc != ERR_ENONE) {
-		Quake_Free();
-		return rc;
-	}
-
-	rc = Cbuf_Execute();
-	if (rc != ERR_ENONE) {
-		Quake_Free();
-		return rc;
-	}
-
-	rc = FS_InitFileSystem();
-	if (rc != ERR_ENONE) {
-		Quake_Free();
-		return rc;
-	}
-
-	return rc;
+	return 0;
 }

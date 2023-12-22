@@ -14,10 +14,14 @@
 # (at your option) any later version.
 #
 
-all: QuakeCommon
+all: Quake
 
 QuakeCommon:
 	@$(MAKE) -C common
 
+Quake: QuakeCommon
+	@$(MAKE) -C main
+
 clean:
 	@$(MAKE) -C common clean
+	@$(MAKE) -C main clean
