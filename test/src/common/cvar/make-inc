@@ -13,14 +13,14 @@
 # (at your option) any later version.
 #
 
-INC = -I../../include
+INC = -I../../../include
 
 # headers
-Q_SHARED_H = ../../include/q_shared.h
-QUAKE_H    = ../../include/quake.h
-COM_H      = ../../include/com.h
-UTIL_H     = ../../include/util.h
-CMD_H      = ../../include/cmd.h
+Q_SHARED_H = ../../../include/q_shared.h
+QUAKE_H    = ../../../include/quake.h
+COM_H      = ../../../include/com.h
+UTIL_H     = ../../../include/util.h
+CMD_H      = ../../../include/cmd.h
 HEADERS = $(Q_SHARED_H)\
 	  $(QUAKE_H)\
 	  $(COM_H)\
