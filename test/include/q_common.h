@@ -26,12 +26,12 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 // source: common.h
 
-#include "common/com.h"
-#include "common/util.h"
-#include "common/cmd.h"
-#include "common/cbuf.h"
-#include "common/cvar.h"
-#include "common/fs.h"
-#include "common/init.h"
+#include "q_common/com.h"
+#include "q_common/util.h"
+#include "q_common/cmd.h"
+#include "q_common/cbuf.h"
+#include "q_common/cvar.h"
+#include "q_common/fs.h"
+#include "q_common/init.h"
 
 #endif

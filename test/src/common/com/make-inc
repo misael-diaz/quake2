@@ -18,10 +18,10 @@ INC = -I../../../include
 # headers
 Q_SHARED_H = ../../../include/q_shared.h
 QUAKE_H    = ../../../include/quake.h
-COMMON_H   = ../../../include/common.h
+Q_COMMON_H = ../../../include/q_common.h
 HEADERS = $(Q_SHARED)\
 	  $(QUAKE_H)\
-	  $(COMMON_H)
+	  $(Q_COMMON_H)
 
 # sources
 COM_C = com.c
