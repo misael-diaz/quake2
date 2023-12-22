@@ -16,13 +16,10 @@
 
 include make-inc
 
-all: $(QUAKE)
-
-$(QUAKE): $(QUAKE_O)
-	$(CC) $(CCOPT) $(OBJS) -o $(QUAKE)
+all: $(QUAKE_O)
 
 $(QUAKE_O): $(HEADERS) $(QUAKE_C)
 	$(CC) $(INC) $(CCOPT) -c $(QUAKE_C) -o $(QUAKE_O)
 
 clean:
-	/bin/rm -f *.o $(QUAKE)
+	/bin/rm -f *.o

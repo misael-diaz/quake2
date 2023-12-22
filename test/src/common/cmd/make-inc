@@ -1,0 +1,30 @@
+#
+# Quake-II						December 05, 2023
+#
+# source: test/src/cmd/make-inc
+# author: @misael-diaz
+#
+# Synopsis:
+# Defines the include file for building the program with GNU make.
+#
+# Copyright (c) 2023 Misael Diaz-Maldonado
+# This file is released under the GNU General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+
+INC = -I../../../include
+
+# headers
+Q_SHARED_H = ../../../include/q_shared.h
+Q_TYPES_H  = ../../../include/q_types.h
+Q_COMMON_H = ../../../include/q_common.h
+HEADERS = $(Q_SHARED_H)\
+	  $(Q_TYPES_H)\
+	  $(Q_COMMON_H)
+
+# sources
+CMD_C = cmd.c
+
+# objects
+CMD_O = cmd.o

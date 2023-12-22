@@ -29,11 +29,8 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include <errno.h>
 
 #include "q_shared.h"
-#include "quake.h"
-#include "util.h"
-#include "com.h"
-#include "cmd.h"
-#include "cvar.h"
+#include "q_types.h"
+#include "q_common.h"
 
 static cvar_t *cvars = NULL;
 static qboolean userinfo_modified = False;

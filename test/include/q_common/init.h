@@ -1,5 +1,5 @@
-#ifndef GUARD_QUAKE_H
-#define GUARD_QUAKE_H
+#ifndef GUARD_QUAKE_INIT_H
+#define GUARD_QUAKE_INIT_H
 
 /*
 
@@ -24,12 +24,16 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// source: quake.h
+// source: init.h -- Quake initializer
 
-#include "quake/type/byte.h"
-#include "quake/type/qboolean.h"
-#include "quake/type/sizebuf_t.h"
-#include "quake/type/xcommand_t.h"
-#include "quake/type/cvar_t.h"
+#ifdef GCC
+int Quake_Free(void);
+
+int Quake_Init(int const argc, const char **argv)
+__attribute__ ((access (read_only, 2), nonnull (2)));
+#else
+int Quake_Free(void);
+int Quake_Init(int const argc, const char **argv);
+#endif
 
 #endif

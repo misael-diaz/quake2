@@ -1,7 +1,7 @@
 #
 # Quake-II						December 05, 2023
 #
-# source: test/src/cmd/make-inc
+# source: test/src/com/make-inc
 # author: @misael-diaz
 #
 # Synopsis:
@@ -13,22 +13,18 @@
 # (at your option) any later version.
 #
 
-INC = -I../../include
+INC = -I../../../include
 
 # headers
-Q_SHARED_H = ../../include/q_shared.h
-QUAKE_H    = ../../include/quake.h
-UTIL_H     = ../../include/util.h
-COM_H      = ../../include/com.h
-FS_H       = ../../include/fs.h
-HEADERS = $(Q_SHARED_H)\
-	  $(QUAKE_H)\
-	  $(UTIL_H)\
-	  $(COM_H)\
-	  $(FS_H)
+Q_SHARED_H = ../../../include/q_shared.h
+Q_TYPES_H  = ../../../include/q_types.h
+Q_COMMON_H = ../../../include/q_common.h
+HEADERS = $(Q_SHARED)\
+	  $(Q_TYPES_H)\
+	  $(Q_COMMON_H)
 
 # sources
-CMD_C = cmd.c
+COM_C = com.c
 
 # objects
-CMD_O = cmd.o
+COM_O = com.o

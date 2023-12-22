@@ -2,7 +2,7 @@
 #
 # Quake-II					December 05, 2023
 #
-# source: test/src/Makefile
+# source: test/Makefile
 # author: @misael-diaz
 #
 # Synopsis:
@@ -16,32 +16,12 @@
 
 all: Quake
 
-coms:
-	@$(MAKE) -C com
+QuakeCommon:
+	@$(MAKE) -C common
 
-utils: coms
-	@$(MAKE) -C util
-
-cmds: coms utils
-	@$(MAKE) -C cmd
-
-cbufs: coms cmds
-	@$(MAKE) -C cbuf
-
-cvars: coms utils cmds
-	@$(MAKE) -C cvar
-
-filesystems: coms utils cmds cbufs cvars
-	@$(MAKE) -C fs
-
-Quake: coms utils cmds cbufs cvars filesystems
-	@$(MAKE) -C quake
+Quake: QuakeCommon
+	@$(MAKE) -C main
 
 clean:
-	@$(MAKE) -C util clean
-	@$(MAKE) -C com clean
-	@$(MAKE) -C cmd clean
-	@$(MAKE) -C cbuf clean
-	@$(MAKE) -C cvar clean
-	@$(MAKE) -C fs clean
-	@$(MAKE) -C quake clean
+	@$(MAKE) -C common clean
+	@$(MAKE) -C main clean
