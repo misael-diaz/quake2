@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <string.h>
 
 #include "q_shared.h"
-#include "quake.h"
+#include "q_types.h"
 #include "q_common.h"
 
 #define MAX_CMD_LEN 0x800

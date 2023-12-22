@@ -26,7 +26,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 
 #include "q_shared.h"
-#include "quake.h"
+#include "q_types.h"
 #include "q_common.h"
 
 int main (int const argc, const char **argv)

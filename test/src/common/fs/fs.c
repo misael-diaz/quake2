@@ -28,7 +28,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include <errno.h>
 
 #include "q_shared.h"
-#include "quake.h"
+#include "q_types.h"
 #include "q_common.h"
 
 typedef struct {

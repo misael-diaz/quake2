@@ -29,7 +29,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include <stdarg.h>
 
 #include "q_shared.h"
-#include "quake.h"
+#include "q_types.h"
 #include "q_common.h"
 
 #define STDC17 GNU_STD17
