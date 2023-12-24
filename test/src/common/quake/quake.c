@@ -24,14 +24,20 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 // source: quake.c -- Quake initializer
 
 #include <stdio.h>
+#include <string.h>
+#include <time.h>
 
 #include "q_shared.h"
 #include "q_types.h"
 #include "q_common.h"
 #include "server.h"
+#include "client.h"
+
+static qboolean quit = False;
 
 int Quake_Free (void)
 {
+	CL_Free();
 	return Z_TagFree(0);
 }
 
@@ -96,5 +102,66 @@ int Quake_Init (int const argc, const char **argv)
 		return rc;
 	}
 
+	rc = CL_Init();
+	if (rc != ERR_ENONE) {
+		Quake_Free();
+		return rc;
+	}
+
+	rc = Cvar_Get("quit", "0", 0);
+	if (rc != ERR_ENONE) {
+		Quake_Free();
+		return rc;
+	}
+
 	return rc;
+}
+
+int Quake_Quit (void)
+{
+	const cvar_t *q = Cvar_FindVarConst("quit");
+	if (!q) {
+		Com_Error(ERR_FATAL, "Quake_Quit: error\n");
+		return ERR_FATAL;
+	}
+
+	if (!strcmp(q->string, "1"))
+	{
+		quit = True;
+	}
+
+	return ERR_ENONE;
+}
+
+int Quake_Loop (void)
+{
+	int rc;
+	time_t const walltime = 60;
+	time_t const t_start = time(NULL);
+	while (True) {
+		time_t const t_end = time(NULL);
+
+		rc = Con_Read();
+		if (rc != ERR_ENONE) {
+			Com_Error(ERR_FATAL, "Quake_Loop: error\n");
+			return ERR_FATAL;
+		}
+
+		rc = Quake_Quit();
+		if (rc != ERR_ENONE) {
+			Com_Error(ERR_FATAL, "Quake_Loop: error\n");
+			return ERR_FATAL;
+		}
+
+		if (quit) {
+			break;
+		}
+
+		time_t const etime = (t_end - t_start);
+		if (etime > walltime) {
+			break;
+		}
+	}
+
+	return ERR_ENONE;
 }
