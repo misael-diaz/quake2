@@ -24,6 +24,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 // source: client.c
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -54,6 +55,15 @@ qboolean Con_Quit (void)
 	return False;
 }
 
+void Con_Exec (void)
+{
+	const char *text = console->text;
+	if (text[0] == '!') {
+		const char *cmd = &text[1];
+		system(cmd);
+	}
+}
+
 void Con_Prompt (void)
 {
 	Com_Error(ERR_ENONE, "quake> ");
@@ -71,6 +81,7 @@ int Con_Read (void)
 	if (sz > 0) {
 		if (!quit) {
 			if (!Con_Quit()) {
+				Con_Exec();
 				Con_Prompt();
 			}
 		}
