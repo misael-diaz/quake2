@@ -36,6 +36,7 @@ FS_O      = ../../src/common/fs/fs.o
 NETCHAN_O = ../../src/common/netchan/netchan.o
 QUAKE_O   = ../../src/common/quake/quake.o
 SERVER_O  = ../../src/server/server.o
+CLIENT_O  = ../../src/client/client.o
 MAIN_O    = ../../src/main/main.o
 OBJS = $(COM_O)\
        $(UTIL_O)\
@@ -46,6 +47,7 @@ OBJS = $(COM_O)\
        $(NETCHAN_O)\
        $(QUAKE_O)\
        $(SERVER_O)\
+       $(CLIENT_O)\
        $(MAIN_O)
 
 # binaries

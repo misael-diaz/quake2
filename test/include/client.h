@@ -1,3 +1,6 @@
+#ifndef GUARD_QUAKE_CLIENT_H
+#define GUARD_QUAKE_CLIENT_H
+
 /*
 
 Derived from Quake-II
@@ -21,34 +24,16 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// source: main.c -- main program
+// source: client.h
 
-#include <stdio.h>
+#ifdef GCC
+int Con_Read(void);
+int CL_Free(void);
+int CL_Init(void);
+#else
+int Con_Read(void);
+int CL_Free(void);
+int CL_Init(void);
+#endif
 
-#include "q_shared.h"
-#include "q_types.h"
-#include "q_common.h"
-
-int main (int const argc, const char **argv)
-{
-	int rc;
-	rc = Quake_Init(argc, argv);
-	if (rc != ERR_ENONE) {
-		return rc;
-	}
-
-	rc = Quake_Loop();
-	if (rc != ERR_ENONE) {
-		Com_Printf("main: error\n");
-		Quake_Free();
-		return rc;
-	}
-//	printf("%s\n", com_argv[0]);
-
-	rc = Quake_Free();
-	if (rc != ERR_ENONE) {
-		return rc;
-	}
-
-	return 0;
-}
+#endif

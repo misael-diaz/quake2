@@ -31,9 +31,12 @@ int Quake_Free(void);
 
 int Quake_Init(int const argc, const char **argv)
 __attribute__ ((access (read_only, 2), nonnull (2)));
+
+int Quake_Loop(void);
 #else
 int Quake_Free(void);
 int Quake_Init(int const argc, const char **argv);
+int Quake_Loop(void);
 #endif
 
 #endif
