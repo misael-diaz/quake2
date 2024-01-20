@@ -1,5 +1,5 @@
-#ifndef GUARD_QUAKE_CLIENT_H
-#define GUARD_QUAKE_CLIENT_H
+#ifndef GUARD_QUAKE_CLIENT_CLIENT_H
+#define GUARD_QUAKE_CLIENT_CLIENT_H
 
 /*
 
@@ -24,9 +24,16 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// source: include/client.h
+// source: include/client/client.h
 
-#include "client/client.h"
-#include "client/ref.h"
+#ifdef GCC
+int Con_Read(void);
+int CL_Free(void);
+int CL_Init(void);
+#else
+int Con_Read(void);
+int CL_Free(void);
+int CL_Init(void);
+#endif
 
 #endif
