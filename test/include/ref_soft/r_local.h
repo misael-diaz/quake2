@@ -1,5 +1,5 @@
-#ifndef GUARD_QUAKE_CLIENT_H
-#define GUARD_QUAKE_CLIENT_H
+#ifndef GUARD_QUAKE_REF_SOFT_LOCAL_H
+#define GUARD_QUAKE_REF_SOFT_LOCAL_H
 
 /*
 
@@ -24,9 +24,17 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// source: include/client.h
+// source: include/ref_soft/r_local.h
 
-#include "client/client.h"
-#include "client/ref.h"
+#define API_VERSION 20240119
+
+typedef struct clipplane_s {
+	struct clipplane_s *next;
+	float normal[3];
+	float dist;
+	byte leftedge;
+	byte rightedge;
+	byte reserved[2];
+} clipplane_t;
 
 #endif

@@ -1,0 +1,33 @@
+#
+# Quake-II						December 05, 2023
+#
+# source: test/src/ref_soft/make-inc
+# author: @misael-diaz
+#
+# Synopsis:
+# Defines the include file for building the program with GNU make.
+#
+# Copyright (c) 2023 Misael Diaz-Maldonado
+# This file is released under the GNU General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+
+INC = -I../../include
+
+# headers
+BYTE_H      = ../../include/q_types/type/byte.h
+Q_BOOLEAN_H = ../../include/q_types/type/qboolean.h
+REF_H       = ../../include/client/ref.h
+R_LOCAL_H   = ../../include/ref_soft/r_local.h
+HEADERS = $(BYTE_H)\
+	  $(Q_BOOLEAN_H)\
+	  $(Q_COMMON_H)\
+	  $(REF_H)\
+	  $(R_LOCAL_H)
+
+# sources
+R_MAIN_C = r_main.c
+
+# objects
+R_MAIN_O = r_main.o

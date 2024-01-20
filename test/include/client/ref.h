@@ -1,5 +1,5 @@
-#ifndef GUARD_QUAKE_CLIENT_H
-#define GUARD_QUAKE_CLIENT_H
+#ifndef GUARD_QUAKE_CLIENT_REF_H
+#define GUARD_QUAKE_CLIENT_REF_H
 
 /*
 
@@ -24,9 +24,23 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// source: include/client.h
+// source: include/client/ref.h
 
-#include "client/client.h"
-#include "client/ref.h"
+typedef struct {
+	int api_version;
+	qboolean (*Init) (void *hinstance, void *wndproc);
+	void (*Shutdown) (void);
+} refexport_t;
+
+typedef struct {
+	int (*Cmd_AddCommand) (const char *name, xcommand_t function);
+	int (*Cmd_Argc) (void);
+	const char *(*Cmd_Argv) (int const args);
+	int (*FS_LoadFile) (const char *filename, void **vdata);
+	int (*FS_FreeFile) (void **vdata);
+	const cvar_t *(*Cvar_FindVarConst) (const char *var_name);
+	int (*Cvar_Get) (const char *var_name, const char *var_value, int const flags);
+	int (*Cvar_Set) (const char *var_name, const char *var_value);
+} refimport_t;
 
 #endif

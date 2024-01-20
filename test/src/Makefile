@@ -25,11 +25,15 @@ servers: QuakeCommon
 clients: QuakeCommon
 	@$(MAKE) -C client
 
-Quake: QuakeCommon servers clients
+ref_software: QuakeCommon servers clients
+	@$(MAKE) -C ref_soft
+
+Quake: QuakeCommon servers clients ref_software
 	@$(MAKE) -C main
 
 clean:
 	@$(MAKE) -C common clean
 	@$(MAKE) -C server clean
 	@$(MAKE) -C client clean
+	@$(MAKE) -C ref_soft clean
 	@$(MAKE) -C main clean
